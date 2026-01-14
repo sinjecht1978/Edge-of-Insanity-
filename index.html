@@ -25,20 +25,26 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             padding: 15px;
+            height: calc(100vh - 20px);
+            display: flex;
+            flex-direction: column;
         }
         
         .screen {
             display: none;
+            flex: 1;
+            flex-direction: column;
+            overflow: hidden;
         }
         
         .screen.active {
-            display: block;
+            display: flex;
         }
         
         .header {
             text-align: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
             border-bottom: 2px solid #f0f0f0;
         }
         
@@ -83,8 +89,8 @@
             background: white;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
-            padding: 12px;
-            margin: 8px 0;
+            padding: 10px;
+            margin: 6px 0;
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -115,29 +121,33 @@
             background: #333;
             color: white;
             border-color: #222;
-            padding: 15px;
-            font-size: 18px;
+            padding: 12px;
+            font-size: 16px;
             text-align: center;
-            margin: 15px 0;
+            margin: 8px 0;
             cursor: default;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         
         .hand-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 10px;
-            margin: 15px 0;
-            padding: 10px;
+            gap: 8px;
+            margin: 10px 0;
+            padding: 8px;
             background: #f9f9f9;
-            border-radius: 10px;
-            max-height: 300px;
+            border-radius: 8px;
+            flex: 1;
             overflow-y: auto;
+            min-height: 150px;
         }
         
         @media (max-width: 768px) {
             .hand-container {
                 grid-template-columns: 1fr;
-                max-height: 250px;
             }
         }
         
@@ -158,58 +168,58 @@
         .player-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin: 10px 0;
+            gap: 6px;
+            margin: 8px 0;
             justify-content: center;
         }
         
         .player-card {
             background: #f5f5f5;
-            padding: 8px;
-            border-radius: 8px;
+            padding: 6px;
+            border-radius: 6px;
             text-align: center;
-            min-width: 90px;
+            min-width: 80px;
             position: relative;
-            font-size: 12px;
+            font-size: 11px;
         }
         
         .player-card.host::after {
             content: "👑";
             position: absolute;
-            top: -6px;
-            right: -6px;
+            top: -4px;
+            right: -4px;
             background: gold;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
+            font-size: 9px;
         }
         
         .player-card.judge::after {
             content: "⚖️";
             position: absolute;
-            top: -6px;
-            left: -6px;
+            top: -4px;
+            left: -4px;
             background: #4CAF50;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            font-size: 9px;
         }
         
         .timer-container {
             text-align: center;
-            margin: 10px 0;
-            padding: 8px;
+            margin: 6px 0;
+            padding: 6px;
             background: #f5f5f5;
-            border-radius: 8px;
+            border-radius: 6px;
         }
         
         .timer {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             color: #667eea;
         }
@@ -233,52 +243,55 @@
             display: flex;
             justify-content: space-around;
             flex-wrap: wrap;
-            gap: 8px;
-            margin: 15px 0;
-            padding: 12px;
+            gap: 6px;
+            margin: 10px 0;
+            padding: 10px;
             background: #f0f0f0;
-            border-radius: 8px;
+            border-radius: 6px;
         }
         
         .point-item {
             text-align: center;
-            min-width: 70px;
+            min-width: 60px;
         }
         
         .point-value {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             color: #667eea;
         }
         
         .point-label {
-            font-size: 11px;
+            font-size: 10px;
             color: #666;
-            margin-top: 3px;
+            margin-top: 2px;
         }
         
         .action-buttons {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin: 15px 0;
+            gap: 6px;
+            margin: 10px 0;
             justify-content: center;
         }
         
         .winner-announcement {
             text-align: center;
-            padding: 15px;
+            padding: 12px;
             background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-            border-radius: 12px;
-            margin: 15px 0;
+            border-radius: 8px;
+            margin: 10px 0;
             animation: pulse 2s infinite;
         }
         
         .judge-options {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 10px;
-            margin: 15px 0;
+            gap: 8px;
+            margin: 10px 0;
+            flex: 1;
+            overflow-y: auto;
+            padding: 5px;
         }
         
         @media (min-width: 768px) {
@@ -290,8 +303,8 @@
         .judge-option {
             background: white;
             border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 12px;
+            border-radius: 8px;
+            padding: 10px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
@@ -321,15 +334,15 @@
         .tab-buttons {
             display: flex;
             border-bottom: 2px solid #e0e0e0;
-            margin: 15px 0;
+            margin: 10px 0;
         }
         
         .tab-button {
-            padding: 10px 15px;
+            padding: 8px 12px;
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: #666;
             position: relative;
@@ -353,78 +366,81 @@
         
         .tab-content {
             display: none;
+            flex: 1;
+            overflow: hidden;
+            flex-direction: column;
         }
         
         .tab-content.active {
-            display: block;
+            display: flex;
         }
         
         .collection-container {
-            max-height: 350px;
+            flex: 1;
             overflow-y: auto;
-            padding: 10px;
+            padding: 8px;
             background: #f9f9f9;
-            border-radius: 10px;
-            margin: 10px 0;
+            border-radius: 8px;
+            margin: 8px 0;
         }
         
         .collection-controls {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             justify-content: flex-end;
-            margin-top: 8px;
+            margin-top: 4px;
         }
         
         .collection-controls button {
-            padding: 4px 8px;
+            padding: 3px 6px;
             border-radius: 4px;
             border: none;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
         }
         
         .deck-info {
             background: #f0f0f0;
-            padding: 10px;
+            padding: 8px;
             border-radius: 6px;
-            margin: 8px 0;
-            font-size: 13px;
+            margin: 6px 0;
+            font-size: 12px;
             display: flex;
             justify-content: space-between;
         }
         
         .game-status {
-            margin: 10px 0;
-            padding: 10px;
+            margin: 6px 0;
+            padding: 8px;
             background: #f9f9f9;
-            border-radius: 8px;
-            font-size: 13px;
+            border-radius: 6px;
+            font-size: 12px;
             text-align: center;
         }
         
         .selected-count {
             background: #4CAF50;
             color: white;
-            padding: 3px 6px;
-            border-radius: 10px;
-            font-size: 11px;
+            padding: 2px 5px;
+            border-radius: 8px;
+            font-size: 10px;
             font-weight: bold;
-            margin-left: 8px;
+            margin-left: 6px;
         }
         
         .multi-answer-container {
             background: #f8f9fa;
             border-radius: 6px;
-            padding: 8px;
-            margin: 8px 0;
+            padding: 6px;
+            margin: 6px 0;
         }
         
         .answer-item {
             background: white;
             border-left: 3px solid #667eea;
-            margin: 6px 0;
-            padding: 8px 12px;
+            margin: 4px 0;
+            padding: 6px 10px;
             border-radius: 4px;
             display: flex;
             align-items: flex-start;
@@ -433,115 +449,144 @@
         .answer-number {
             background: #667eea;
             color: white;
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             text-align: center;
-            line-height: 22px;
-            margin-right: 10px;
+            line-height: 20px;
+            margin-right: 8px;
             flex-shrink: 0;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
         }
         
         .all-submissions-display {
             background: #f8f9fa;
-            border-radius: 10px;
-            padding: 12px;
-            margin: 15px 0;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            max-height: 200px;
+            overflow-y: auto;
         }
         
         .submission-item {
             background: white;
             border: 1px solid #e0e0e0;
             border-radius: 6px;
-            padding: 10px;
-            margin: 8px 0;
+            padding: 8px;
+            margin: 6px 0;
         }
         
         .share-section {
             background: #e8f5e9;
             border: 2px solid #4CAF50;
-            border-radius: 8px;
-            padding: 12px;
-            margin: 15px 0;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px 0;
         }
         
         .share-url {
             background: white;
             border: 1px solid #4CAF50;
             border-radius: 6px;
-            padding: 8px;
-            margin: 8px 0;
+            padding: 6px;
+            margin: 6px 0;
             word-break: break-all;
             font-family: monospace;
-            font-size: 11px;
+            font-size: 10px;
         }
         
         .compact-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
-            margin: 10px 0;
+            margin: 8px 0;
         }
         
         .compact-label {
-            font-size: 13px;
+            font-size: 12px;
             color: #666;
-            min-width: 120px;
+            min-width: 100px;
         }
         
         .compact-input {
             flex: 1;
-            min-width: 200px;
-            padding: 8px;
+            min-width: 180px;
+            padding: 6px;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
+            border-radius: 6px;
+            font-size: 13px;
         }
         
         .compact-textarea {
             width: 100%;
-            padding: 10px;
+            padding: 8px;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
+            border-radius: 6px;
+            font-size: 13px;
             resize: vertical;
-            min-height: 80px;
-            max-height: 150px;
+            min-height: 70px;
+            max-height: 120px;
         }
         
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
-            margin: 15px 0;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
+            margin: 12px 0;
         }
         
         .stat-box {
             background: #f5f5f5;
-            border-radius: 8px;
-            padding: 10px;
+            border-radius: 6px;
+            padding: 8px;
             text-align: center;
         }
         
         .stat-value {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             color: #667eea;
         }
         
         .stat-label {
-            font-size: 11px;
+            font-size: 10px;
             color: #666;
             margin-top: 2px;
         }
         
         .small-btn {
-            padding: 6px 12px;
-            font-size: 12px;
-            margin: 3px;
+            padding: 4px 8px;
+            font-size: 11px;
+            margin: 2px;
+        }
+        
+        .content-scrollable {
+            flex: 1;
+            overflow-y: auto;
+            padding: 5px;
+        }
+        
+        .game-main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .game-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 5px;
+        }
+        
+        .menu-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 10px;
         }
     </style>
 </head>
@@ -550,212 +595,228 @@
         <!-- Screen 1: Main Menu -->
         <div id="menuScreen" class="screen active">
             <div class="header">
-                <h1 style="font-size: 24px;">🎴 Cards Game</h1>
-                <p style="color: #666; font-size: 14px;">Play with bots or share cards with friends!</p>
+                <h1 style="font-size: 22px;">🎴 Cards Game</h1>
+                <p style="color: #666; font-size: 13px;">Play with bots or share cards with friends!</p>
             </div>
             
-            <div style="text-align: center; margin: 20px 0;">
-                <div class="compact-row" style="justify-content: center;">
-                    <div class="compact-label">Your Name:</div>
-                    <input type="text" id="playerName" class="compact-input" 
-                           placeholder="Enter your name" value="Player">
-                </div>
-                
-                <div style="margin: 20px 0;">
-                    <button class="btn btn-success" onclick="startSolitaireGame()">
-                        🚀 Start Game vs Bots
-                    </button>
-                    <button class="btn btn-secondary" onclick="showScreen('collection')">
-                        🃏 Manage Cards
-                    </button>
-                    <button class="btn btn-warning" onclick="showScreen('create')">
-                        ✨ Create Cards
-                    </button>
-                    <button class="btn btn-secondary" onclick="showScreen('share')">
-                        🔗 Share Cards
-                    </button>
-                </div>
-                
-                <!-- Card Stats -->
-                <div class="stats-grid">
-                    <div class="stat-box">
-                        <div class="stat-value" id="menuAnswerCount">0</div>
-                        <div class="stat-label">Answer Cards</div>
+            <div class="menu-content">
+                <div style="text-align: center;">
+                    <div class="compact-row" style="justify-content: center;">
+                        <div class="compact-label">Your Name:</div>
+                        <input type="text" id="playerName" class="compact-input" 
+                               placeholder="Enter your name" value="Player">
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-value" id="menuQuestionCount">0</div>
-                        <div class="stat-label">Question Cards</div>
+                    
+                    <div style="margin: 15px 0;">
+                        <button class="btn btn-success" onclick="startSolitaireGame()">
+                            🚀 Start Game vs Bots
+                        </button>
+                        <button class="btn btn-secondary" onclick="showScreen('collection')">
+                            🃏 Manage Cards
+                        </button>
+                        <button class="btn btn-warning" onclick="showScreen('create')">
+                            ✨ Create Cards
+                        </button>
+                        <button class="btn btn-secondary" onclick="showScreen('share')">
+                            🔗 Share Cards
+                        </button>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-value" id="menuCustomCount">0</div>
-                        <div class="stat-label">Custom Cards</div>
+                    
+                    <!-- Card Stats -->
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-value" id="menuAnswerCount">0</div>
+                            <div class="stat-label">Answer Cards</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="menuQuestionCount">0</div>
+                            <div class="stat-label">Question Cards</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="menuCustomCount">0</div>
+                            <div class="stat-label">Custom Cards</div>
+                        </div>
                     </div>
-                </div>
-                
-                <div style="margin-top: 20px; color: #666; font-size: 13px; padding: 0 10px;">
-                    <p><strong>Quick Play:</strong></p>
-                    <p>1. Enter your name above</p>
-                    <p>2. Click "Start Game vs Bots"</p>
-                    <p>3. Select cards and submit!</p>
+                    
+                    <div style="margin-top: 15px; color: #666; font-size: 12px; padding: 0 10px;">
+                        <p><strong>Quick Play:</strong></p>
+                        <p>1. Enter your name above</p>
+                        <p>2. Click "Start Game vs Bots"</p>
+                        <p>3. Select cards and submit!</p>
+                    </div>
                 </div>
             </div>
         </div>
         
         <!-- Screen 2: Game Screen -->
         <div id="gameScreen" class="screen">
-            <div class="header">
-                <h2 style="font-size: 20px;">Round <span id="roundNumber">1</span></h2>
-                <div class="timer-container">
-                    <div id="timerDisplay" class="timer">45:00</div>
-                    <div style="color: #666; font-size: 11px;">Time remaining</div>
+            <div class="game-main-area">
+                <div class="header">
+                    <h2 style="font-size: 18px;">Round <span id="roundNumber">1</span></h2>
+                    <div class="timer-container">
+                        <div id="timerDisplay" class="timer">45:00</div>
+                        <div style="color: #666; font-size: 10px;">Time remaining</div>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="game-status">
-                <strong>Status:</strong> <span id="statusText">Select a card from your hand</span>
-                <span id="selectedCountInfo" class="selected-count"></span>
-            </div>
-            
-            <div style="margin: 8px 0; padding: 6px 12px; background: #4CAF50; color: white; border-radius: 15px; display: inline-block; font-size: 12px; text-align: center; width: 100%;">
-                ⚖️ Judge: <span id="currentJudgeName">Loading...</span>
-            </div>
-            
-            <!-- Question Display -->
-            <div class="card black" id="questionDisplay">
-                Loading question...
-            </div>
-            
-            <!-- Deck Info -->
-            <div class="deck-info">
-                <div>
-                    <strong>Answers:</strong> 
-                    <span id="answerDeckCount">0</span> left
-                    (<span id="answerDiscardCount">0</span> used)
+                
+                <!-- Sticky Question Display -->
+                <div class="card black" id="questionDisplay">
+                    Loading question...
                 </div>
-                <div>
-                    <strong>Questions:</strong> 
-                    <span id="questionDeckCount">0</span> left
-                    (<span id="questionDiscardCount">0</span> used)
+                
+                <div class="game-content">
+                    <div class="game-status">
+                        <strong>Status:</strong> <span id="statusText">Select a card from your hand</span>
+                        <span id="selectedCountInfo" class="selected-count"></span>
+                    </div>
+                    
+                    <div style="margin: 6px 0; padding: 4px 10px; background: #4CAF50; color: white; border-radius: 12px; display: inline-block; font-size: 11px; text-align: center; width: 100%;">
+                        ⚖️ Judge: <span id="currentJudgeName">Loading...</span>
+                    </div>
+                    
+                    <!-- Deck Info -->
+                    <div class="deck-info">
+                        <div>
+                            <strong>Answers:</strong> 
+                            <span id="answerDeckCount">0</span> left
+                            (<span id="answerDiscardCount">0</span> used)
+                        </div>
+                        <div>
+                            <strong>Questions:</strong> 
+                            <span id="questionDeckCount">0</span> left
+                            (<span id="questionDiscardCount">0</span> used)
+                        </div>
+                    </div>
+                    
+                    <!-- Player List -->
+                    <div class="player-list" id="gamePlayers">
+                    </div>
+                    
+                    <!-- Score Display -->
+                    <div class="points-display">
+                        <div class="point-item">
+                            <div class="point-value" id="playerScore">0</div>
+                            <div class="point-label">Your Score</div>
+                        </div>
+                        <div class="point-item">
+                            <div class="point-value">3</div>
+                            <div class="point-label">Points to Win</div>
+                        </div>
+                        <div class="point-item">
+                            <div class="point-value" id="cardsInHand">6</div>
+                            <div class="point-label">Cards in Hand</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Hand Display -->
+                    <h3 style="text-align: center; margin: 10px 0; font-size: 15px;">Your Hand (Click or type 1-6):</h3>
+                    <div class="hand-container" id="playerHand">
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button class="btn" onclick="submitCard()" id="submitBtn" disabled>
+                            Submit Card
+                        </button>
+                        <button class="btn btn-warning" onclick="forceBotSubmission()">
+                            Force Bots
+                        </button>
+                        <button class="btn" onclick="returnToMenu()">
+                            Quit Game
+                        </button>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Player List -->
-            <div class="player-list" id="gamePlayers">
-            </div>
-            
-            <!-- Score Display -->
-            <div class="points-display">
-                <div class="point-item">
-                    <div class="point-value" id="playerScore">0</div>
-                    <div class="point-label">Your Score</div>
-                </div>
-                <div class="point-item">
-                    <div class="point-value">3</div>
-                    <div class="point-label">Points to Win</div>
-                </div>
-                <div class="point-item">
-                    <div class="point-value" id="cardsInHand">6</div>
-                    <div class="point-label">Cards in Hand</div>
-                </div>
-            </div>
-            
-            <!-- Hand Display -->
-            <h3 style="text-align: center; margin: 15px 0; font-size: 16px;">Your Hand (Click or type 1-6):</h3>
-            <div class="hand-container" id="playerHand">
-            </div>
-            
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-                <button class="btn" onclick="submitCard()" id="submitBtn" disabled>
-                    Submit Card
-                </button>
-                <button class="btn btn-warning" onclick="forceBotSubmission()">
-                    Force Bots
-                </button>
-                <button class="btn" onclick="returnToMenu()">
-                    Quit Game
-                </button>
             </div>
         </div>
         
         <!-- Screen 3: Judging Screen -->
         <div id="judgingScreen" class="screen">
-            <div class="header">
-                <h2 style="font-size: 20px;">Judge Selection</h2>
-                <div class="card black" id="judgeQuestion">
-                    Loading question...
+            <div class="game-main-area">
+                <div class="header">
+                    <h2 style="font-size: 18px;">Judge Selection</h2>
+                    <div class="card black" id="judgeQuestion">
+                        Loading question...
+                    </div>
+                    <p style="margin: 8px 0; font-size: 14px; color: #666;">
+                        Select the best answer:
+                    </p>
+                    <div style="color: #4CAF50; font-weight: bold; padding: 4px 10px; background: #e8f5e9; border-radius: 12px; display: inline-block; font-size: 11px;">
+                        ⚖️ You are the Judge
+                    </div>
                 </div>
-                <p style="margin: 10px 0; font-size: 15px; color: #666;">
-                    Select the best answer:
-                </p>
-                <div style="color: #4CAF50; font-weight: bold; padding: 6px 12px; background: #e8f5e9; border-radius: 15px; display: inline-block; font-size: 12px;">
-                    ⚖️ You are the Judge
+                
+                <div class="game-content">
+                    <div class="judge-options" id="judgeOptions">
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-warning" onclick="forceRandomWinner()">
+                            Pick Random Winner
+                        </button>
+                        <button class="btn" onclick="returnToMenu()">
+                            Quit Game
+                        </button>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="all-submissions-display">
-                <h3 style="text-align: center; margin-bottom: 12px; color: #667eea; font-size: 16px;">All Submissions</h3>
-                <div id="allSubmissions">
-                </div>
-            </div>
-            
-            <div class="judge-options" id="judgeOptions">
-            </div>
-            
-            <div class="action-buttons">
-                <button class="btn btn-warning" onclick="forceRandomWinner()">
-                    Pick Random Winner
-                </button>
-                <button class="btn" onclick="returnToMenu()">
-                    Quit Game
-                </button>
             </div>
         </div>
         
         <!-- Screen 4: Winner Screen -->
         <div id="winnerScreen" class="screen">
-            <div class="winner-announcement">
-                <h2 style="font-size: 22px;">🎉 Round Winner! 🎉</h2>
-                <div id="winnerDetails" style="margin: 15px 0; font-size: 16px;">
+            <div class="game-main-area">
+                <div class="header">
+                    <h2 style="font-size: 20px;">🎉 Round Winner! 🎉</h2>
                 </div>
-            </div>
-            
-            <div class="all-submissions-display">
-                <h3 style="text-align: center; margin-bottom: 12px; color: #667eea; font-size: 16px;">All Submissions This Round</h3>
-                <div id="winnerSubmissions">
+                
+                <div class="game-content">
+                    <!-- Question Display on Winner Screen -->
+                    <div class="card black" id="winnerQuestion">
+                        Loading question...
+                    </div>
+                    
+                    <div class="winner-announcement">
+                        <div id="winnerDetails" style="margin: 10px 0; font-size: 15px;">
+                        </div>
+                    </div>
+                    
+                    <div class="all-submissions-display">
+                        <h3 style="text-align: center; margin-bottom: 10px; color: #667eea; font-size: 15px;">All Submissions This Round</h3>
+                        <div id="winnerSubmissions">
+                        </div>
+                    </div>
+                    
+                    <div class="points-display">
+                        <div class="point-item">
+                            <div class="point-value" id="winnerScore">0</div>
+                            <div class="point-label">Winner's Score</div>
+                        </div>
+                        <div class="point-item">
+                            <div class="point-value" id="roundsPlayed">1</div>
+                            <div class="point-label">Rounds Played</div>
+                        </div>
+                        <div class="point-item">
+                            <div class="point-value" id="deckSize">0</div>
+                            <div class="point-label">Cards Left</div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-success" onclick="continueToNextRound()" id="nextRoundBtn">
+                            Next Round
+                        </button>
+                        <button class="btn" onclick="returnToMenu()">
+                            Back to Menu
+                        </button>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="points-display">
-                <div class="point-item">
-                    <div class="point-value" id="winnerScore">0</div>
-                    <div class="point-label">Winner's Score</div>
-                </div>
-                <div class="point-item">
-                    <div class="point-value" id="roundsPlayed">1</div>
-                    <div class="point-label">Rounds Played</div>
-                </div>
-                <div class="point-item">
-                    <div class="point-value" id="deckSize">0</div>
-                    <div class="point-label">Cards Left</div>
-                </div>
-            </div>
-            
-            <div class="action-buttons">
-                <button class="btn btn-success" onclick="continueToNextRound()" id="nextRoundBtn">
-                    Next Round
-                </button>
-                <button class="btn" onclick="returnToMenu()">
-                    Back to Menu
-                </button>
             </div>
         </div>
         
         <!-- Screen 5: Card Collection -->
         <div id="collectionScreen" class="screen">
             <div class="header">
-                <h2 style="font-size: 22px;">🃏 Card Collection</h2>
-                <p style="color: #666; margin-top: 8px; font-size: 14px;">Enable/disable or delete cards</p>
+                <h2 style="font-size: 20px;">🃏 Card Collection</h2>
+                <p style="color: #666; margin-top: 6px; font-size: 13px;">Enable/disable or delete cards</p>
             </div>
             
             <div class="tab-buttons">
@@ -797,8 +858,8 @@
         <!-- Screen 6: Create Cards -->
         <div id="createScreen" class="screen">
             <div class="header">
-                <h2 style="font-size: 22px;">✨ Create Cards</h2>
-                <p style="color: #666; margin-top: 8px; font-size: 14px;">Add custom cards to your collection</p>
+                <h2 style="font-size: 20px;">✨ Create Cards</h2>
+                <p style="color: #666; margin-top: 6px; font-size: 13px;">Add custom cards to your collection</p>
             </div>
             
             <div class="tab-buttons">
@@ -807,28 +868,28 @@
             </div>
             
             <div id="answerCreateTab" class="tab-content active">
-                <div style="margin: 20px 0;">
+                <div style="margin: 15px 0; flex: 1; display: flex; flex-direction: column;">
                     <textarea id="answerCreateText" class="compact-textarea" 
                               placeholder="Enter your answer card text here..."></textarea>
                     
-                    <button class="btn btn-success" onclick="createCard('answer')" style="margin-top: 15px; width: 100%;">
+                    <button class="btn btn-success" onclick="createCard('answer')" style="margin-top: 10px; width: 100%;">
                         ✅ Create Answer Card
                     </button>
                     
-                    <div style="margin-top: 15px; color: #666; font-size: 12px;">
+                    <div style="margin-top: 10px; color: #666; font-size: 11px;">
                         <p>💡 <strong>Tips:</strong> Keep it funny and short (under 50 characters)</p>
                     </div>
                 </div>
             </div>
             
             <div id="questionCreateTab" class="tab-content">
-                <div style="margin: 20px 0;">
+                <div style="margin: 15px 0; flex: 1; display: flex; flex-direction: column;">
                     <textarea id="questionCreateText" class="compact-textarea" 
                               placeholder="Enter your question with _____ for blanks..."></textarea>
                     
-                    <div style="margin: 12px 0;">
-                        <label style="font-size: 14px;">Blanks: <span style="color: #667eea; font-weight: bold;" id="createBlankCount">1</span></label>
-                        <div style="margin-top: 8px;">
+                    <div style="margin: 10px 0;">
+                        <label style="font-size: 13px;">Blanks: <span style="color: #667eea; font-weight: bold;" id="createBlankCount">1</span></label>
+                        <div style="margin-top: 6px;">
                             <button class="small-btn" onclick="addCreateBlank()">
                                 + Add Blank
                             </button>
@@ -838,11 +899,11 @@
                         </div>
                     </div>
                     
-                    <button class="btn btn-success" onclick="createCard('question')" style="margin-top: 15px; width: 100%;">
+                    <button class="btn btn-success" onclick="createCard('question')" style="margin-top: 10px; width: 100%;">
                         ✅ Create Question Card
                     </button>
                     
-                    <div style="margin-top: 15px; color: #666; font-size: 12px;">
+                    <div style="margin-top: 10px; color: #666; font-size: 11px;">
                         <p>💡 <strong>Tips:</strong> Use _____ for blanks (1-3 blanks works best)</p>
                     </div>
                 </div>
@@ -858,56 +919,58 @@
         <!-- Screen 7: Share Cards -->
         <div id="shareScreen" class="screen">
             <div class="header">
-                <h2 style="font-size: 22px;">🔗 Share Cards</h2>
-                <p style="color: #666; margin-top: 8px; font-size: 14px;">Share your custom card collection</p>
+                <h2 style="font-size: 20px;">🔗 Share Cards</h2>
+                <p style="color: #666; margin-top: 6px; font-size: 13px;">Share your custom card collection</p>
             </div>
             
-            <div class="share-section">
-                <h3 style="font-size: 18px; margin-bottom: 10px;">📤 Share via URL</h3>
-                <p style="font-size: 13px; margin-bottom: 10px;">Generate a link that includes all your custom cards.</p>
+            <div class="game-content">
+                <div class="share-section">
+                    <h3 style="font-size: 16px; margin-bottom: 8px;">📤 Share via URL</h3>
+                    <p style="font-size: 12px; margin-bottom: 8px;">Generate a link that includes all your custom cards.</p>
+                    
+                    <button class="btn btn-success" onclick="generateShareLink()" style="margin: 6px 0; width: 100%;">
+                        🔗 Generate Share Link
+                    </button>
+                    
+                    <div id="shareLinkContainer" style="display: none;">
+                        <p style="font-size: 12px; margin: 8px 0 4px 0;"><strong>Share this link:</strong></p>
+                        <div class="share-url" id="shareUrl"></div>
+                        <button class="btn btn-secondary" onclick="copyShareLink()" style="margin: 6px 0; width: 100%;">
+                            📋 Copy Link
+                        </button>
+                    </div>
+                </div>
                 
-                <button class="btn btn-success" onclick="generateShareLink()" style="margin: 8px 0; width: 100%;">
-                    🔗 Generate Share Link
-                </button>
-                
-                <div id="shareLinkContainer" style="display: none;">
-                    <p style="font-size: 13px; margin: 10px 0 5px 0;"><strong>Share this link:</strong></p>
-                    <div class="share-url" id="shareUrl"></div>
-                    <button class="btn btn-secondary" onclick="copyShareLink()" style="margin: 8px 0; width: 100%;">
-                        📋 Copy Link
+                <div class="share-section">
+                    <h3 style="font-size: 16px; margin-bottom: 8px;">📥 Import Cards</h3>
+                    <p style="font-size: 12px; margin-bottom: 8px;">Paste a share URL to import cards:</p>
+                    
+                    <input type="text" id="importUrl" class="compact-input" 
+                           placeholder="Paste share URL here..." 
+                           style="margin: 6px 0; width: 100%;">
+                    
+                    <button class="btn btn-success" onclick="importFromUrl()" style="width: 100%;">
+                        📥 Import Cards from URL
                     </button>
                 </div>
-            </div>
-            
-            <div class="share-section">
-                <h3 style="font-size: 18px; margin-bottom: 10px;">📥 Import Cards</h3>
-                <p style="font-size: 13px; margin-bottom: 10px;">Paste a share URL to import cards:</p>
                 
-                <input type="text" id="importUrl" class="compact-input" 
-                       placeholder="Paste share URL here..." 
-                       style="margin: 8px 0; width: 100%;">
+                <div class="share-section">
+                    <h3 style="font-size: 16px; margin-bottom: 8px;">💾 File Export/Import</h3>
+                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                        <button class="btn btn-secondary" onclick="exportCardsToFile()" style="flex: 1;">
+                            📤 Export to File
+                        </button>
+                        <button class="btn btn-secondary" onclick="importCardsFromFile()" style="flex: 1;">
+                            📥 Import from File
+                        </button>
+                    </div>
+                </div>
                 
-                <button class="btn btn-success" onclick="importFromUrl()" style="width: 100%;">
-                    📥 Import Cards from URL
-                </button>
-            </div>
-            
-            <div class="share-section">
-                <h3 style="font-size: 18px; margin-bottom: 10px;">💾 File Export/Import</h3>
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <button class="btn btn-secondary" onclick="exportCardsToFile()" style="flex: 1;">
-                        📤 Export to File
-                    </button>
-                    <button class="btn btn-secondary" onclick="importCardsFromFile()" style="flex: 1;">
-                        📥 Import from File
+                <div class="action-buttons">
+                    <button class="btn" onclick="showScreen('menu')">
+                        Back to Menu
                     </button>
                 </div>
-            </div>
-            
-            <div class="action-buttons">
-                <button class="btn" onclick="showScreen('menu')">
-                    Back to Menu
-                </button>
             </div>
         </div>
     </div>
@@ -1109,27 +1172,65 @@
             const savedCollection = localStorage.getItem('cardCollection');
             
             if (savedCollection) {
-                gameState.cardCollection = JSON.parse(savedCollection);
-                console.log("📦 Loaded saved card collection");
+                try {
+                    gameState.cardCollection = JSON.parse(savedCollection);
+                    
+                    // FIX: Ensure all default cards are present
+                    const currentAnswerTexts = gameState.cardCollection.answers.map(c => c.text.toLowerCase());
+                    const currentQuestionTexts = gameState.cardCollection.questions.map(c => c.text.toLowerCase());
+                    
+                    // Add missing default answers
+                    DEFAULT_ANSWERS.forEach(text => {
+                        if (!currentAnswerTexts.includes(text.toLowerCase())) {
+                            gameState.cardCollection.answers.push({
+                                text: text,
+                                enabled: true,
+                                isDefault: true
+                            });
+                            console.log("Added missing default answer:", text);
+                        }
+                    });
+                    
+                    // Add missing default questions
+                    DEFAULT_QUESTIONS.forEach(text => {
+                        if (!currentQuestionTexts.includes(text.toLowerCase())) {
+                            gameState.cardCollection.questions.push({
+                                text: text,
+                                enabled: true,
+                                isDefault: true
+                            });
+                            console.log("Added missing default question:", text);
+                        }
+                    });
+                    
+                    saveCardCollection();
+                    console.log("📦 Loaded and repaired card collection");
+                } catch (e) {
+                    console.error("Error loading saved collection, creating fresh one:", e);
+                    createDefaultCollection();
+                }
             } else {
-                // Create default collection
-                gameState.cardCollection = {
-                    answers: DEFAULT_ANSWERS.map(text => ({
-                        text: text,
-                        enabled: true,
-                        isDefault: true
-                    })),
-                    questions: DEFAULT_QUESTIONS.map(text => ({
-                        text: text,
-                        enabled: true,
-                        isDefault: true
-                    }))
-                };
-                saveCardCollection();
-                console.log("📦 Created default card collection");
+                createDefaultCollection();
             }
             
             updateMenuStats();
+        }
+        
+        function createDefaultCollection() {
+            gameState.cardCollection = {
+                answers: DEFAULT_ANSWERS.map(text => ({
+                    text: text,
+                    enabled: true,
+                    isDefault: true
+                })),
+                questions: DEFAULT_QUESTIONS.map(text => ({
+                    text: text,
+                    enabled: true,
+                    isDefault: true
+                }))
+            };
+            saveCardCollection();
+            console.log("📦 Created fresh default card collection");
         }
         
         function saveCardCollection() {
@@ -1251,7 +1352,7 @@
             const playerName = document.getElementById('playerName').value.trim() || "Player";
             gameState.playerName = playerName;
             
-            // Initialize decks FIRST - this was missing!
+            // Initialize decks FIRST
             initializeDecks();
             
             // Reset game state
@@ -1524,7 +1625,7 @@
                 
                 cardDiv.innerHTML = `
                     <div class="card-number">${index + 1}</div>
-                    <div style="display: inline-block; font-size: 14px;">${card}</div>
+                    <div style="display: inline-block; font-size: 13px;">${card}</div>
                 `;
                 
                 cardDiv.onclick = () => selectCard(index);
@@ -1649,6 +1750,27 @@
             }, 1500);
         }
         
+        function autoSubmitCard() {
+            if (gameState.isJudge || gameState.playerHasSubmitted) return;
+            
+            if (gameState.selectedCards.length === 0 && gameState.hand.length > 0) {
+                // Auto-select first card if none selected
+                if (gameState.currentBlankCount === 1) {
+                    gameState.selectedCards = [0];
+                } else {
+                    const indices = [];
+                    for (let i = 0; i < Math.min(gameState.currentBlankCount, gameState.hand.length); i++) {
+                        indices.push(i);
+                    }
+                    gameState.selectedCards = indices;
+                }
+            }
+            
+            if (gameState.selectedCards.length > 0) {
+                submitCard();
+            }
+        }
+        
         function submitBotsCards() {
             Object.values(bots).forEach(bot => {
                 if (bot.hasSubmitted) return;
@@ -1709,7 +1831,6 @@
             if (gameState.isJudge) {
                 showScreen('judging');
                 displayJudgeOptions();
-                displayAllSubmissions('allSubmissions');
             } else {
                 setTimeout(() => {
                     if (gameState.submittedCards.length > 0) {
@@ -1737,18 +1858,18 @@
                             ${submission.card.map((card, i) => `
                                 <div class="answer-item">
                                     <div class="answer-number">${i + 1}</div>
-                                    <div style="font-size: 14px;">${card}</div>
+                                    <div style="font-size: 13px;">${card}</div>
                                 </div>
                             `).join('')}
                         </div>
                     `;
                 } else {
-                    answersHTML = `<div style="font-size: 15px; margin: 6px 0;">${submission.card}</div>`;
+                    answersHTML = `<div style="font-size: 14px; margin: 4px 0;">${submission.card}</div>`;
                 }
                 
                 submissionDiv.innerHTML = `
-                    <div style="font-weight: bold; color: #667eea; margin-bottom: 4px; font-size: 14px;">
-                        Submission ${index + 1} - ${submission.player}
+                    <div style="font-weight: bold; color: #667eea; margin-bottom: 4px; font-size: 13px;">
+                        ${submission.player}
                     </div>
                     ${answersHTML}
                 `;
@@ -1775,19 +1896,19 @@
                             ${submission.card.map((card, i) => `
                                 <div class="answer-item">
                                     <div class="answer-number">${i + 1}</div>
-                                    <div style="font-size: 14px;">${card}</div>
+                                    <div style="font-size: 13px;">${card}</div>
                                 </div>
                             `).join('')}
                         </div>
                     `;
                 } else {
-                    answersHTML = `<div style="font-size: 15px; margin: 6px 0;">${submission.card}</div>`;
+                    answersHTML = `<div style="font-size: 14px; margin: 4px 0;">${submission.card}</div>`;
                 }
                 
                 optionDiv.innerHTML = `
-                    <div style="font-size: 18px; color: #667eea; margin-bottom: 6px;">Option ${index + 1}</div>
+                    <div style="font-size: 16px; color: #667eea; margin-bottom: 4px;">Option ${index + 1}</div>
                     ${answersHTML}
-                    <div style="color: #666; font-size: 12px; margin-top: 6px;">From: ${submission.player}</div>
+                    <div style="color: #666; font-size: 11px; margin-top: 4px;">From: ${submission.player}</div>
                 `;
                 
                 optionDiv.onclick = () => selectWinner(index);
@@ -1836,23 +1957,26 @@
         function showWinnerScreen(winner, gameWinner) {
             gameState.gamePhase = "winner";
             
+            // Set question on winner screen
+            document.getElementById('winnerQuestion').textContent = gameState.activeQuestion;
+            
             displayAllSubmissions('winnerSubmissions');
             
             let winnerText = '';
             if (Array.isArray(winner.card)) {
                 winnerText = winner.card.map((card, i) => `
-                    <div style="margin: 4px 0; padding-left: 15px;">
+                    <div style="margin: 3px 0; padding-left: 12px; font-size: 14px;">
                         <span style="color: #FFD700; font-weight: bold;">${i + 1}.</span> ${card}
                     </div>
                 `).join('');
             } else {
-                winnerText = `<div style="font-size: 18px; margin: 8px 0;">"${winner.card}"</div>`;
+                winnerText = `<div style="font-size: 16px; margin: 6px 0;">"${winner.card}"</div>`;
             }
             
             document.getElementById('winnerDetails').innerHTML = `
-                <div style="color: #4CAF50; font-weight: bold; font-size: 16px;">Winner: ${winner.player}</div>
+                <div style="color: #4CAF50; font-weight: bold; font-size: 15px;">Winner: ${winner.player}</div>
                 ${winnerText}
-                <div style="margin-top: 8px; color: #4CAF50; font-weight: bold;">🎉 Round Winner! 🎉</div>
+                <div style="margin-top: 6px; color: #4CAF50; font-weight: bold;">🎉 Round Winner! 🎉</div>
             `;
             
             const winnerScore = gameState.scores[winner.playerId] || 0;
@@ -1864,10 +1988,10 @@
                 const winnerPlayer = gameState.players.find(p => p.id === gameWinner);
                 if (winnerPlayer) {
                     document.getElementById('winnerDetails').innerHTML += `
-                        <div style="margin-top: 15px; font-size: 20px; color: #FFD700;">
+                        <div style="margin-top: 10px; font-size: 18px; color: #FFD700;">
                             🏆 GAME WINNER: ${winnerPlayer.name}! 🏆
                         </div>
-                        <div style="color: #666; font-size: 14px;">Final Score: ${gameState.scores[gameWinner]} points</div>
+                        <div style="color: #666; font-size: 13px;">Final Score: ${gameState.scores[gameWinner]} points</div>
                     `;
                     document.getElementById('nextRoundBtn').style.display = 'none';
                     gameState.gameActive = false;
@@ -1937,9 +2061,9 @@
                 const hasSubmitted = gameState.submittedCards.some(s => s.playerId === player.id);
                 
                 playerDiv.innerHTML = `
-                    <div style="font-weight: bold; font-size: 13px;">${player.name}</div>
-                    <div class="score-display" style="font-size: 14px;">Score: ${gameState.scores[player.id] || 0}</div>
-                    <div style="font-size: 11px; color: ${hasSubmitted ? '#4CAF50' : '#f44336'}; margin-top: 2px;">
+                    <div style="font-weight: bold; font-size: 12px;">${player.name}</div>
+                    <div class="score-display" style="font-size: 13px;">Score: ${gameState.scores[player.id] || 0}</div>
+                    <div style="font-size: 10px; color: ${hasSubmitted ? '#4CAF50' : '#f44336'}; margin-top: 2px;">
                         ${hasSubmitted ? '✅ Submitted' : '⏳ Waiting'}
                     </div>
                 `;
@@ -2319,10 +2443,10 @@
                 
                 cardDiv.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 14px;">${card.text}</span>
+                        <span style="font-size: 13px;">${card.text}</span>
                         <div class="collection-controls">
                             ${card.isDefault ? 
-                                '<span style="color: #666; font-size: 11px;">Default</span>' : 
+                                '<span style="color: #666; font-size: 10px;">Default</span>' : 
                                 ''
                             }
                             <button class="${card.enabled ? 'btn-disable' : 'btn-enable'}" 
@@ -2357,10 +2481,10 @@
                 
                 cardDiv.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 14px;">${card.text}</span>
+                        <span style="font-size: 13px;">${card.text}</span>
                         <div class="collection-controls">
                             ${card.isDefault ? 
-                                '<span style="color: #666; font-size: 11px;">Default</span>' : 
+                                '<span style="color: #666; font-size: 10px;">Default</span>' : 
                                 ''
                             }
                             <button class="${card.enabled ? 'btn-disable' : 'btn-enable'}" 

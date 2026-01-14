@@ -588,6 +588,22 @@
             justify-content: center;
             padding: 10px;
         }
+        
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+        
+        .invite-link-container {
+            margin-top: 15px;
+            padding: 12px;
+            background: #f0f8ff;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
@@ -609,7 +625,7 @@
                     
                     <div style="margin: 15px 0;">
                         <button class="btn btn-success" onclick="startSolitaireGame()">
-                            🚀 Start Game vs Bots
+                            🚀 Start Game vs Bots (3 Bots)
                         </button>
                         <button class="btn btn-secondary" onclick="showScreen('collection')">
                             🃏 Manage Cards
@@ -620,6 +636,24 @@
                         <button class="btn btn-secondary" onclick="showScreen('share')">
                             🔗 Share Cards
                         </button>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <button class="btn btn-success" onclick="generateGameInviteLink()">
+                            🎮 Generate Game Link
+                        </button>
+                    </div>
+                    
+                    <!-- Invite Link Section -->
+                    <div id="inviteLinkContainer" class="invite-link-container" style="display: none;">
+                        <h3 style="font-size: 16px; margin-bottom: 8px;">🎮 Game Invite Link</h3>
+                        <p style="font-size: 12px; margin-bottom: 8px;">Share this link with friends to invite them to the game:</p>
+                        <div class="share-url" id="gameInviteUrl"></div>
+                        <button class="btn btn-secondary" onclick="copyGameInviteLink()" style="margin: 6px 0; width: 100%;">
+                            📋 Copy Game Link
+                        </button>
+                        <p style="font-size: 11px; color: #666; margin-top: 6px;">Note: Online multiplayer coming soon!</p>
                     </div>
                     
                     <!-- Card Stats -->
@@ -636,13 +670,18 @@
                             <div class="stat-value" id="menuCustomCount">0</div>
                             <div class="stat-label">Custom Cards</div>
                         </div>
+                        <div class="stat-box">
+                            <div class="stat-value">7</div>
+                            <div class="stat-label">Points to Win</div>
+                        </div>
                     </div>
                     
                     <div style="margin-top: 15px; color: #666; font-size: 12px; padding: 0 10px;">
                         <p><strong>Quick Play:</strong></p>
                         <p>1. Enter your name above</p>
                         <p>2. Click "Start Game vs Bots"</p>
-                        <p>3. Select cards and submit!</p>
+                        <p>3. Select cards and submit! (10 cards in hand)</p>
+                        <p>4. First to 7 points wins!</p>
                     </div>
                 </div>
             </div>
@@ -699,17 +738,17 @@
                             <div class="point-label">Your Score</div>
                         </div>
                         <div class="point-item">
-                            <div class="point-value">3</div>
+                            <div class="point-value">7</div>
                             <div class="point-label">Points to Win</div>
                         </div>
                         <div class="point-item">
-                            <div class="point-value" id="cardsInHand">6</div>
+                            <div class="point-value" id="cardsInHand">10</div>
                             <div class="point-label">Cards in Hand</div>
                         </div>
                     </div>
                     
                     <!-- Hand Display -->
-                    <h3 style="text-align: center; margin: 10px 0; font-size: 15px;">Your Hand (Click or type 1-6):</h3>
+                    <h3 style="text-align: center; margin: 10px 0; font-size: 15px;">Your Hand (Click or type 1-10):</h3>
                     <div class="hand-container" id="playerHand">
                     </div>
                     
@@ -797,6 +836,10 @@
                         <div class="point-item">
                             <div class="point-value" id="deckSize">0</div>
                             <div class="point-label">Cards Left</div>
+                        </div>
+                        <div class="point-item">
+                            <div class="point-value">7</div>
+                            <div class="point-label">Points to Win</div>
                         </div>
                     </div>
                     
@@ -925,18 +968,35 @@
             
             <div class="game-content">
                 <div class="share-section">
-                    <h3 style="font-size: 16px; margin-bottom: 8px;">📤 Share via URL</h3>
+                    <h3 style="font-size: 16px; margin-bottom: 8px;">🎮 Share Game Invite</h3>
+                    <p style="font-size: 12px; margin-bottom: 8px;">Generate a link to invite friends to play:</p>
+                    
+                    <button class="btn btn-success" onclick="generateGameInviteLink()" style="margin: 6px 0; width: 100%;">
+                        🎮 Generate Game Invite Link
+                    </button>
+                    
+                    <div id="gameInviteLinkContainer" style="display: none;">
+                        <p style="font-size: 12px; margin: 8px 0 4px 0;"><strong>Game Invite Link:</strong></p>
+                        <div class="share-url" id="gameInviteUrlShare"></div>
+                        <button class="btn btn-secondary" onclick="copyGameInviteLink()" style="margin: 6px 0; width: 100%;">
+                            📋 Copy Game Link
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="share-section">
+                    <h3 style="font-size: 16px; margin-bottom: 8px;">📤 Share Card Collection</h3>
                     <p style="font-size: 12px; margin-bottom: 8px;">Generate a link that includes all your custom cards.</p>
                     
                     <button class="btn btn-success" onclick="generateShareLink()" style="margin: 6px 0; width: 100%;">
-                        🔗 Generate Share Link
+                        🔗 Generate Card Collection Link
                     </button>
                     
                     <div id="shareLinkContainer" style="display: none;">
                         <p style="font-size: 12px; margin: 8px 0 4px 0;"><strong>Share this link:</strong></p>
                         <div class="share-url" id="shareUrl"></div>
                         <button class="btn btn-secondary" onclick="copyShareLink()" style="margin: 6px 0; width: 100%;">
-                            📋 Copy Link
+                            📋 Copy Collection Link
                         </button>
                     </div>
                 </div>
@@ -995,7 +1055,8 @@
             },
             submittedCards: [],
             scores: {},
-            winningScore: 3,
+            winningScore: 7, // Changed to 7
+            handSize: 10, // Changed to 10
             currentBlankCount: 1,
             activeQuestion: null,
             timeLimit: 45,
@@ -1116,7 +1177,58 @@
             "Riding off into the sunset.",
             "The hiccups.",
             "The Holy Bible.",
-            "Puberty."
+            "Puberty.",
+            // Additional 50 answer cards
+            "An unexpected cactus in the butt.",
+            "The screams of the damned.",
+            "A really aggressive duck.",
+            "My secret collection of belly button lint.",
+            "The smell of regret.",
+            "A suspiciously sticky keyboard.",
+            "Trying to fit in.",
+            "The cold embrace of the void.",
+            "A questionable life choice.",
+            "The art of subtlety.",
+            "My extensive collection of rubber chickens.",
+            "The undeniable urge to dance.",
+            "A poorly timed sneeze.",
+            "The sweet release of death.",
+            "My questionable taste in music.",
+            "The overwhelming urge to lick things.",
+            "A surprise party for no one.",
+            "The existential dread of existence.",
+            "My questionable hygiene habits.",
+            "The sound of silence.",
+            "A conspiracy theory about pigeons.",
+            "The crushing weight of expectation.",
+            "My awkward phase.",
+            "The thrill of the chase.",
+            "A poorly constructed lie.",
+            "The monotony of daily life.",
+            "My irrational fear of spoons.",
+            "The beauty of imperfection.",
+            "A sudden burst of confidence.",
+            "The lingering smell of failure.",
+            "My questionable fashion choices.",
+            "The inevitable heat death of the universe.",
+            "A poorly executed plan.",
+            "The sweet taste of victory.",
+            "My collection of weird rocks.",
+            "The constant need for validation.",
+            "A surprise twist ending.",
+            "The uncomfortable truth.",
+            "My questionable life decisions.",
+            "The beauty of simplicity.",
+            "A poorly timed joke.",
+            "The overwhelming power of love.",
+            "My secret stash of chocolate.",
+            "The relentless march of time.",
+            "A questionable political opinion.",
+            "The sweet sound of success.",
+            "My collection of random facts.",
+            "The undeniable truth.",
+            "A poorly chosen tattoo.",
+            "The eternal struggle."
         ];
         
         const DEFAULT_QUESTIONS = [
@@ -1164,7 +1276,28 @@
             "What's the worst thing you can say on a first date? _____",
             "What's my hidden talent? _____",
             "What's the secret ingredient in my famous chili? _____",
-            "What's my biggest regret? _____"
+            "What's my biggest regret? _____",
+            // Additional 20 question cards
+            "What's my secret to staying young? _____",
+            "What will be the title of my autobiography? _____",
+            "What's always in my refrigerator? _____",
+            "What's my weirdest habit? _____",
+            "What would I do with a million dollars? _____",
+            "What's my superpower? _____",
+            "What's the worst advice I've ever received? _____",
+            "What's my favorite way to waste time? _____",
+            "What's in my backpack right now? _____",
+            "What's the key to a good relationship? _____",
+            "What's my morning routine? _____",
+            "What's my ultimate comfort food? _____",
+            "What's the weirdest dream I've ever had? _____",
+            "What's my secret talent? _____",
+            "What's my guilty pleasure TV show? _____",
+            "What's the best part of my day? _____",
+            "What's my philosophy on life? _____",
+            "What's my favorite way to relax? _____",
+            "What's the most embarrassing thing in my search history? _____",
+            "What's my favorite memory from high school? _____"
         ];
         
         // ==================== INITIALIZATION ====================
@@ -1175,7 +1308,7 @@
                 try {
                     gameState.cardCollection = JSON.parse(savedCollection);
                     
-                    // FIX: Ensure all default cards are present
+                    // Ensure all default cards are present
                     const currentAnswerTexts = gameState.cardCollection.answers.map(c => c.text.toLowerCase());
                     const currentQuestionTexts = gameState.cardCollection.questions.map(c => c.text.toLowerCase());
                     
@@ -1187,7 +1320,6 @@
                                 enabled: true,
                                 isDefault: true
                             });
-                            console.log("Added missing default answer:", text);
                         }
                     });
                     
@@ -1199,7 +1331,6 @@
                                 enabled: true,
                                 isDefault: true
                             });
-                            console.log("Added missing default question:", text);
                         }
                     });
                     
@@ -1247,6 +1378,73 @@
             document.getElementById('menuAnswerCount').textContent = totalAnswers;
             document.getElementById('menuQuestionCount').textContent = totalQuestions;
             document.getElementById('menuCustomCount').textContent = customAnswers + customQuestions;
+        }
+        
+        // ==================== GAME INVITE SYSTEM ====================
+        function generateGameInviteLink() {
+            const playerName = document.getElementById('playerName').value.trim() || "Player";
+            const currentUrl = window.location.origin + window.location.pathname;
+            
+            // Create a simple invite link with player name encoded
+            const inviteData = {
+                type: 'game_invite',
+                player: playerName,
+                timestamp: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const jsonString = JSON.stringify(inviteData);
+            const compressed = btoa(encodeURIComponent(jsonString));
+            const inviteUrl = `${currentUrl}?invite=${compressed}`;
+            
+            // Update both containers
+            document.getElementById('gameInviteUrl').textContent = inviteUrl;
+            document.getElementById('gameInviteUrlShare').textContent = inviteUrl;
+            document.getElementById('inviteLinkContainer').style.display = 'block';
+            document.getElementById('gameInviteLinkContainer').style.display = 'block';
+            
+            // Show alert
+            alert("🎮 Game invite link generated! Share this with friends.\n\nNote: Full multiplayer will be available once server is connected.");
+        }
+        
+        function copyGameInviteLink() {
+            const inviteUrl = document.getElementById('gameInviteUrl').textContent || 
+                            document.getElementById('gameInviteUrlShare').textContent;
+            
+            if (inviteUrl) {
+                navigator.clipboard.writeText(inviteUrl).then(() => {
+                    alert("✅ Game invite link copied to clipboard!");
+                }).catch(() => {
+                    prompt("Copy this game invite link:", inviteUrl);
+                });
+            }
+        }
+        
+        function checkForInvite() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const inviteParam = urlParams.get('invite');
+            
+            if (inviteParam) {
+                try {
+                    const decoded = decodeURIComponent(atob(inviteParam));
+                    const invite = JSON.parse(decoded);
+                    
+                    if (invite.type === 'game_invite' && invite.player) {
+                        // Auto-fill player name from invite
+                        document.getElementById('playerName').value = invite.player;
+                        
+                        // Show welcome message
+                        setTimeout(() => {
+                            alert(`🎮 Welcome ${invite.player}!\n\nYou've been invited to play Cards Game!\n\nStart a game with bots or wait for multiplayer support.`);
+                        }, 1000);
+                        
+                        // Clean URL
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                } catch (error) {
+                    console.error("Failed to parse invite:", error);
+                }
+            }
         }
         
         // ==================== DECK MANAGEMENT ====================
@@ -1345,9 +1543,9 @@
             updateDeckInfo();
         }
         
-        // ==================== GAME START - FIXED ====================
+        // ==================== GAME START - UPDATED ====================
         function startSolitaireGame() {
-            console.log("🎮 Starting solitaire game...");
+            console.log("🎮 Starting solitaire game with 3 bots...");
             
             const playerName = document.getElementById('playerName').value.trim() || "Player";
             gameState.playerName = playerName;
@@ -1367,7 +1565,7 @@
             gameState.gameActive = true;
             gameState.gamePhase = "playing";
             
-            // Create players
+            // Create players - Now with 3 bots
             const humanPlayer = {
                 id: 'player_human',
                 name: playerName,
@@ -1392,7 +1590,15 @@
                 isBot: true
             };
             
-            gameState.players = [humanPlayer, bot1, bot2];
+            const bot3 = {
+                id: 'bot_charlie',
+                name: 'Bot Charlie',
+                isHost: false,
+                score: 0,
+                isBot: true
+            };
+            
+            gameState.players = [humanPlayer, bot1, bot2, bot3];
             
             // Initialize scores
             gameState.players.forEach(player => {
@@ -1417,7 +1623,7 @@
             console.log("Judge:", gameState.players[gameState.currentJudgeIndex].name);
             console.log("Total cards in deck:", gameState.deck.length, "answers and", gameState.questionDeck.length, "questions");
             
-            // Deal hands
+            // Deal hands (10 cards each)
             dealHands();
             
             // Start first round
@@ -1444,7 +1650,7 @@
             }
             
             refillHand() {
-                while (this.hand.length < 6) {
+                while (this.hand.length < gameState.handSize) {
                     const card = drawAnswerCard();
                     if (card) {
                         this.hand.push(card);
@@ -1505,19 +1711,19 @@
         }
         
         function dealHands() {
-            // Deal to human
+            // Deal to human (10 cards)
             gameState.hand = [];
-            for (let i = 0; i < 6; i++) {
+            for (let i = 0; i < gameState.handSize; i++) {
                 const card = drawAnswerCard();
                 if (card) {
                     gameState.hand.push(card);
                 }
             }
             
-            // Deal to bots
+            // Deal to bots (10 cards each)
             Object.values(bots).forEach(bot => {
                 const hand = [];
-                for (let i = 0; i < 6; i++) {
+                for (let i = 0; i < gameState.handSize; i++) {
                     const card = drawAnswerCard();
                     if (card) {
                         hand.push(card);
@@ -1991,7 +2197,7 @@
                         <div style="margin-top: 10px; font-size: 18px; color: #FFD700;">
                             🏆 GAME WINNER: ${winnerPlayer.name}! 🏆
                         </div>
-                        <div style="color: #666; font-size: 13px;">Final Score: ${gameState.scores[gameWinner]} points</div>
+                        <div style="color: #666; font-size: 13px;">Final Score: ${gameState.scores[gameWinner]} points (First to 7)</div>
                     `;
                     document.getElementById('nextRoundBtn').style.display = 'none';
                     gameState.gameActive = false;
@@ -2018,7 +2224,7 @@
                 bot.hasSubmitted = false;
             });
             
-            while (gameState.hand.length < 6) {
+            while (gameState.hand.length < gameState.handSize) {
                 const card = drawAnswerCard();
                 if (card) {
                     gameState.hand.push(card);
@@ -2558,6 +2764,7 @@
         console.log("🎴 Cards Game Loaded!");
         initializeCardCollection();
         loadCardsFromURL();
+        checkForInvite(); // Check for game invites on load
         
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
@@ -2565,11 +2772,11 @@
                 const key = e.key;
                 const number = parseInt(key);
                 
-                if (number >= 1 && number <= 6) {
+                if (number >= 1 && number <= 10) {
                     selectCard(number - 1);
                 }
             }
         });
     </script>
 </body>
-</html>
+    </html>

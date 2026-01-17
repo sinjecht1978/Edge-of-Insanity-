@@ -8,7 +8,7 @@ const server = http.createServer(app);
 const io = socketIo(server);
 
 // Serve static files (your index.html)
-app.use(express.static(__dirname));
+app.use(express.static('../public'));
 
 // Basic Socket.io setup
 const rooms = new Map();

@@ -818,6 +818,22 @@
             align-items: center;
         }
     </style>
+
+    <!-- Add these AFTER your <style> block -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#764ba2">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<script>
+// Service Worker Registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js');
+  });
+}
+</script>
 </head>
 <body>
     <div class="container">

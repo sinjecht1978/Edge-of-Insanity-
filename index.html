@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cards Game - Mobile Friendly</title>
+    <title>Cards Game - Multiplayer with Accounts</title>
     <style>
+        /* ========== ALL YOUR ORIGINAL CSS ========== */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -604,58 +605,375 @@
             border: 2px dashed #667eea;
             border-radius: 8px;
         }
+        
+        /* ========== NEW CSS FOR MULTIPLAYER ========== */
+        .auth-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .auth-input {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .user-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .online-players {
+            background: #e8f5e9;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .player-online {
+            background: white;
+            border: 1px solid #4CAF50;
+            border-radius: 6px;
+            padding: 6px;
+            margin: 4px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        
+        .status-online {
+            background: #4CAF50;
+        }
+        
+        .status-ingame {
+            background: #FF9800;
+        }
+        
+        .status-offline {
+            background: #f44336;
+        }
+        
+        .room-list {
+            background: #f0f8ff;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .room-item {
+            background: white;
+            border: 1px solid #667eea;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 6px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .room-item:hover {
+            background: #e6f0ff;
+            transform: translateY(-2px);
+        }
+        
+        .room-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+        
+        .chat-container {
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            margin: 10px 0;
+            display: flex;
+            flex-direction: column;
+            height: 300px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        .chat-message {
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 6px;
+            background: #f5f5f5;
+            font-size: 13px;
+        }
+        
+        .chat-input-container {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            max-width: 300px;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .friends-list {
+            background: #fff8e1;
+            border: 2px solid #FFB300;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .friend-item {
+            background: white;
+            border: 1px solid #FFB300;
+            border-radius: 6px;
+            padding: 8px;
+            margin: 4px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Screen 1: Main Menu -->
-        <div id="menuScreen" class="screen active">
+        <!-- Screen 0: Login/Register -->
+        <div id="authScreen" class="screen active">
             <div class="header">
-                <h1 style="font-size: 22px;">🎴 Cards Game</h1>
-                <p style="color: #666; font-size: 13px;">Play with bots or share cards with friends!</p>
+                <h1 style="font-size: 26px;">🎴 Cards Game</h1>
+                <p style="color: #666; font-size: 14px; margin-top: 5px;">Create account or login to play</p>
             </div>
             
             <div class="menu-content">
-                <div style="text-align: center;">
-                    <div class="compact-row" style="justify-content: center;">
-                        <div class="compact-label">Your Name:</div>
-                        <input type="text" id="playerName" class="compact-input" 
-                               placeholder="Enter your name" value="Player">
+                <!-- Login Form -->
+                <div class="auth-section">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">Login to Your Account</h3>
+                    <div class="auth-form">
+                        <input type="text" id="loginUsername" class="auth-input" placeholder="Username" required>
+                        <input type="password" id="loginPassword" class="auth-input" placeholder="Password" required>
+                        <div class="auth-buttons">
+                            <button class="btn btn-success" onclick="login()" style="flex: 1;">
+                                Login
+                            </button>
+                            <button class="btn btn-secondary" onclick="quickLogin()" style="flex: 1;">
+                                Quick Play (Guest)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Register Form -->
+                <div class="auth-section">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">Create New Account</h3>
+                    <div class="auth-form">
+                        <input type="text" id="registerUsername" class="auth-input" placeholder="Choose username" required>
+                        <input type="email" id="registerEmail" class="auth-input" placeholder="Email (optional)">
+                        <input type="password" id="registerPassword" class="auth-input" placeholder="Choose password" required>
+                        <input type="password" id="registerConfirmPassword" class="auth-input" placeholder="Confirm password" required>
+                        <button class="btn btn-success" onclick="register()" style="width: 100%;">
+                            Create Account
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Quick Info -->
+                <div style="margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 8px;">
+                    <h3 style="color: #666; margin-bottom: 10px; font-size: 16px;">🎮 Features:</h3>
+                    <ul style="color: #666; font-size: 13px; line-height: 1.6; padding-left: 20px;">
+                        <li><strong>Free Account:</strong> Save your card collection</li>
+                        <li><strong>Play with Friends:</strong> Create private rooms</li>
+                        <li><strong>Public Matchmaking:</strong> Join random games</li>
+                        <li><strong>Play with Bots:</strong> Solo practice mode</li>
+                        <li><strong>Create Cards:</strong> Add custom cards to your collection</li>
+                        <li><strong>Friends System:</strong> Add and chat with friends</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Screen 1: Main Menu -->
+        <div id="menuScreen" class="screen">
+            <div class="header">
+                <div class="user-info">
+                    <div>
+                        <span style="font-weight: bold; font-size: 16px;">👤 <span id="currentUsername">Guest</span></span>
+                        <span style="font-size: 12px; opacity: 0.9;" id="userStatus">Online</span>
+                    </div>
+                    <button class="btn btn-warning" onclick="logout()" style="padding: 6px 12px; font-size: 12px;">
+                        Logout
+                    </button>
+                </div>
+                
+                <h1 style="font-size: 22px; margin-top: 10px;">🎴 Cards Game</h1>
+                <p style="color: #666; font-size: 13px;">Play with bots, friends, or random players!</p>
+            </div>
+            
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="switchMenuTab('play')">Play</button>
+                <button class="tab-button" onclick="switchMenuTab('social')">Social</button>
+                <button class="tab-button" onclick="switchMenuTab('cards')">Cards</button>
+            </div>
+            
+            <!-- Play Tab -->
+            <div id="playTab" class="tab-content active">
+                <div class="menu-content">
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <button class="btn btn-success" onclick="startSolitaireGame()" style="width: 100%; margin-bottom: 8px;">
+                            🚀 Play vs Bots (3 Bots)
+                        </button>
+                        <button class="btn btn-secondary" onclick="showScreen('createRoom')" style="width: 100%; margin-bottom: 8px;">
+                            🏠 Create Private Room
+                        </button>
+                        <button class="btn btn-warning" onclick="showScreen('publicRooms')" style="width: 100%; margin-bottom: 8px;">
+                            🌐 Public Matchmaking
+                        </button>
                     </div>
                     
-                    <div style="margin: 15px 0;">
-                        <button class="btn btn-success" onclick="startSolitaireGame()">
-                            🚀 Start Game vs Bots (3 Bots)
-                        </button>
-                        <button class="btn btn-secondary" onclick="showScreen('collection')">
-                            🃏 Manage Cards
-                        </button>
-                        <button class="btn btn-warning" onclick="showScreen('create')">
-                            ✨ Create Cards
-                        </button>
-                        <button class="btn btn-secondary" onclick="showScreen('share')">
-                            🔗 Share Cards
-                        </button>
+                    <!-- Quick Join Section -->
+                    <div class="share-section">
+                        <h3 style="font-size: 16px; margin-bottom: 8px;">🔗 Quick Join</h3>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="roomCodeInput" class="compact-input" placeholder="Enter room code">
+                            <button class="btn btn-success" onclick="joinRoomByCode()" style="min-width: 80px;">
+                                Join
+                            </button>
+                        </div>
                     </div>
                     
-                    <!-- Quick Actions -->
-                    <div class="quick-actions">
-                        <button class="btn btn-success" onclick="generateGameInviteLink()">
-                            🎮 Generate Game Link
-                        </button>
+                    <!-- Current Game Invites -->
+                    <div id="activeInvitesContainer" class="invite-link-container" style="display: none;">
+                        <h3 style="font-size: 16px; margin-bottom: 8px;">🎮 Active Invites</h3>
+                        <div id="activeInvitesList"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Social Tab -->
+            <div id="socialTab" class="tab-content">
+                <div class="content-scrollable">
+                    <!-- Friends List -->
+                    <div class="friends-list">
+                        <h3 style="font-size: 16px; margin-bottom: 8px;">👥 Friends</h3>
+                        <div id="friendsList">
+                            <p style="text-align: center; color: #666; font-size: 13px;">No friends yet</p>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <input type="text" id="addFriendInput" class="compact-input" placeholder="Friend's username" style="margin-bottom: 8px;">
+                            <button class="btn btn-secondary" onclick="sendFriendRequest()" style="width: 100%;">
+                                Add Friend
+                            </button>
+                        </div>
                     </div>
                     
-                    <!-- Invite Link Section -->
-                    <div id="inviteLinkContainer" class="invite-link-container" style="display: none;">
-                        <h3 style="font-size: 16px; margin-bottom: 8px;">🎮 Game Invite Link</h3>
-                        <p style="font-size: 12px; margin-bottom: 8px;">Share this link with friends to invite them to the game:</p>
-                        <div class="share-url" id="gameInviteUrl"></div>
-                        <button class="btn btn-secondary" onclick="copyGameInviteLink()" style="margin: 6px 0; width: 100%;">
-                            📋 Copy Game Link
-                        </button>
-                        <p style="font-size: 11px; color: #666; margin-top: 6px;">Note: Online multiplayer coming soon!</p>
+                    <!-- Online Players -->
+                    <div class="online-players">
+                        <h3 style="font-size: 16px; margin-bottom: 8px;">🌐 Online Players</h3>
+                        <div id="onlinePlayersList">
+                            <p style="text-align: center; color: #666; font-size: 13px;">Loading...</p>
+                        </div>
                     </div>
                     
+                    <!-- Chat -->
+                    <div class="chat-container">
+                        <div class="chat-messages" id="globalChatMessages">
+                            <p style="text-align: center; color: #666; font-size: 13px;">Global chat loading...</p>
+                        </div>
+                        <div class="chat-input-container">
+                            <input type="text" id="globalChatInput" class="chat-input" placeholder="Type a message...">
+                            <button class="btn" onclick="sendGlobalChat()" style="margin-left: 8px;">
+                                Send
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Cards Tab -->
+            <div id="cardsTab" class="tab-content">
+                <div class="content-scrollable">
                     <!-- Card Stats -->
                     <div class="stats-grid">
                         <div class="stat-box">
@@ -676,18 +994,240 @@
                         </div>
                     </div>
                     
-                    <div style="margin-top: 15px; color: #666; font-size: 12px; padding: 0 10px;">
-                        <p><strong>Quick Play:</strong></p>
-                        <p>1. Enter your name above</p>
-                        <p>2. Click "Start Game vs Bots"</p>
-                        <p>3. Select cards and submit! (10 cards in hand)</p>
-                        <p>4. First to 7 points wins!</p>
+                    <!-- Card Management -->
+                    <div class="quick-actions">
+                        <button class="btn btn-secondary" onclick="showScreen('collection')">
+                            🃏 Manage Cards
+                        </button>
+                        <button class="btn btn-warning" onclick="showScreen('create')">
+                            ✨ Create Cards
+                        </button>
+                        <button class="btn btn-secondary" onclick="showScreen('share')">
+                            🔗 Share Cards
+                        </button>
+                    </div>
+                    
+                    <!-- Collection Preview -->
+                    <div style="background: #f9f9f9; border-radius: 8px; padding: 10px; margin-top: 10px;">
+                        <h3 style="font-size: 16px; margin-bottom: 8px;">Your Collection</h3>
+                        <div id="collectionPreview">
+                            <p style="color: #666; font-size: 13px;">Loading...</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- Screen 2: Game Screen -->
+        <!-- Screen 2: Create Room -->
+        <div id="createRoomScreen" class="screen">
+            <div class="header">
+                <h2 style="font-size: 20px;">🏠 Create Private Room</h2>
+                <p style="color: #666; font-size: 13px;">Invite friends with room code</p>
+            </div>
+            
+            <div class="menu-content">
+                <!-- Room Settings -->
+                <div class="share-section">
+                    <h3 style="font-size: 16px; margin-bottom: 10px;">Room Settings</h3>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <label style="font-size: 14px; display: block; margin-bottom: 6px;">Room Name:</label>
+                        <input type="text" id="roomName" class="compact-input" placeholder="My Awesome Game" value="My Game Room">
+                    </div>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <label style="font-size: 14px; display: block; margin-bottom: 6px;">Max Players:</label>
+                        <select id="roomMaxPlayers" class="compact-input" style="padding: 8px;">
+                            <option value="4">4 Players</option>
+                            <option value="5">5 Players</option>
+                            <option value="6" selected>6 Players</option>
+                            <option value="7">7 Players</option>
+                            <option value="8">8 Players</option>
+                        </select>
+                    </div>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <label style="font-size: 14px; display: block; margin-bottom: 6px;">Points to Win:</label>
+                        <select id="roomPointsToWin" class="compact-input" style="padding: 8px;">
+                            <option value="5">5 Points</option>
+                            <option value="7" selected>7 Points</option>
+                            <option value="10">10 Points</option>
+                            <option value="15">15 Points</option>
+                        </select>
+                    </div>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <label style="font-size: 14px; display: block; margin-bottom: 6px;">
+                            <input type="checkbox" id="roomEnableTimer" checked> Enable Timer
+                        </label>
+                        <label style="font-size: 14px; display: block; margin-bottom: 6px;">
+                            <input type="checkbox" id="roomAllowCardCreation" checked> Allow Card Creation
+                        </label>
+                        <label style="font-size: 14px; display: block; margin-bottom: 6px;">
+                            <input type="checkbox" id="roomAddBots" checked> Add Bots to Fill Room
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Create Room Button -->
+                <button class="btn btn-success" onclick="createPrivateRoom()" style="width: 100%; padding: 12px; font-size: 16px;">
+                    🚀 Create Room & Generate Invite Code
+                </button>
+                
+                <!-- Room Code Display -->
+                <div id="roomCodeContainer" class="share-section" style="display: none; margin-top: 15px;">
+                    <h3 style="font-size: 16px; margin-bottom: 8px;">Room Created!</h3>
+                    <p style="font-size: 12px; margin-bottom: 8px;">Share this code with friends:</p>
+                    <div class="share-url" id="roomCodeDisplay" style="font-size: 18px; font-weight: bold; text-align: center; padding: 15px;"></div>
+                    <button class="btn btn-secondary" onclick="copyRoomCode()" style="margin: 8px 0; width: 100%;">
+                        📋 Copy Room Code
+                    </button>
+                    
+                    <!-- Invite Friends Directly -->
+                    <div style="margin-top: 15px;">
+                        <h4 style="font-size: 14px; margin-bottom: 8px;">Invite Friends:</h4>
+                        <div id="friendInviteList"></div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons" style="margin-top: 15px;">
+                    <button class="btn" onclick="showScreen('menu')">
+                        Back to Menu
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Screen 3: Public Rooms -->
+        <div id="publicRoomsScreen" class="screen">
+            <div class="header">
+                <h2 style="font-size: 20px;">🌐 Public Matchmaking</h2>
+                <p style="color: #666; font-size: 13px;">Join public games or create your own</p>
+            </div>
+            
+            <div class="menu-content">
+                <!-- Quick Match -->
+                <div class="share-section">
+                    <h3 style="font-size: 16px; margin-bottom: 10px;">⚡ Quick Match</h3>
+                    <p style="font-size: 13px; margin-bottom: 12px;">Find a game automatically:</p>
+                    <button class="btn btn-success" onclick="findQuickMatch()" style="width: 100%; padding: 12px;">
+                        🔍 Find Quick Match
+                    </button>
+                    <div style="margin-top: 10px; text-align: center;">
+                        <span id="quickMatchStatus" style="font-size: 12px; color: #666;">Ready to match...</span>
+                    </div>
+                </div>
+                
+                <!-- Room List -->
+                <div class="room-list">
+                    <h3 style="font-size: 16px; margin-bottom: 10px;">🏠 Available Public Rooms</h3>
+                    <div id="publicRoomsList">
+                        <p style="text-align: center; color: #666; font-size: 13px; padding: 20px;">
+                            Loading public rooms...
+                        </p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="refreshPublicRooms()" style="width: 100%; margin-top: 10px;">
+                        🔄 Refresh List
+                    </button>
+                </div>
+                
+                <!-- Create Public Room -->
+                <div class="share-section" style="margin-top: 15px;">
+                    <h3 style="font-size: 16px; margin-bottom: 10px;">🎮 Create Public Room</h3>
+                    <button class="btn btn-warning" onclick="createPublicRoom()" style="width: 100%; padding: 12px;">
+                        🚀 Create Public Room
+                    </button>
+                </div>
+                
+                <div class="action-buttons" style="margin-top: 15px;">
+                    <button class="btn" onclick="showScreen('menu')">
+                        Back to Menu
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Screen 4: Room Lobby -->
+        <div id="roomLobbyScreen" class="screen">
+            <div class="header">
+                <h2 style="font-size: 20px;">🎮 Room Lobby</h2>
+                <p style="color: #666; font-size: 13px;" id="lobbyRoomName">Loading...</p>
+            </div>
+            
+            <div class="menu-content">
+                <!-- Room Info -->
+                <div class="share-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h3 style="font-size: 16px;">Room: <span id="lobbyRoomCode">----</span></h3>
+                        <div style="font-size: 12px; color: #666;">
+                            <span id="lobbyPlayerCount">0</span>/<span id="lobbyMaxPlayers">6</span> Players
+                        </div>
+                    </div>
+                    
+                    <!-- Room Settings (Host Only) -->
+                    <div id="hostControls" style="display: none; margin-bottom: 15px; padding: 10px; background: #f0f8ff; border-radius: 6px;">
+                        <h4 style="font-size: 14px; margin-bottom: 8px;">⚙️ Host Controls</h4>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button class="btn btn-secondary" onclick="startGameFromLobby()">
+                                🚀 Start Game
+                            </button>
+                            <button class="btn btn-warning" onclick="kickAllBots()">
+                                🤖 Remove Bots
+                            </button>
+                            <button class="btn" onclick="addBotToRoom()">
+                                ➕ Add Bot
+                            </button>
+                            <button class="btn btn-danger" onclick="closeRoom()">
+                                ❌ Close Room
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Invite Section -->
+                    <div style="margin-top: 10px;">
+                        <div class="share-url" id="lobbyInviteCode" style="text-align: center; font-weight: bold; font-size: 16px; padding: 10px;"></div>
+                        <button class="btn btn-secondary" onclick="copyLobbyInvite()" style="width: 100%; margin-top: 8px;">
+                            📋 Copy Invite Code
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Players List -->
+                <div class="online-players" style="flex: 1; margin: 10px 0;">
+                    <h3 style="font-size: 16px; margin-bottom: 10px;">👥 Players in Room</h3>
+                    <div id="lobbyPlayersList">
+                        <p style="text-align: center; color: #666; font-size: 13px;">Loading players...</p>
+                    </div>
+                </div>
+                
+                <!-- Chat -->
+                <div class="chat-container" style="height: 200px;">
+                    <div class="chat-messages" id="roomChatMessages">
+                        <p style="text-align: center; color: #666; font-size: 13px;">Room chat</p>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" id="roomChatInput" class="chat-input" placeholder="Type to room chat...">
+                        <button class="btn" onclick="sendRoomChat()" style="margin-left: 8px;">
+                            Send
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons" style="margin-top: 15px;">
+                    <button class="btn btn-success" onclick="readyToggle()" id="readyButton">
+                        ✅ Ready
+                    </button>
+                    <button class="btn btn-warning" onclick="leaveRoom()">
+                        Leave Room
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ========== YOUR ORIGINAL SCREENS (UNCHANGED) ========== -->
+        
+        <!-- Screen 5: Game Screen -->
         <div id="gameScreen" class="screen">
             <div class="game-main-area">
                 <div class="header">
@@ -768,7 +1308,7 @@
             </div>
         </div>
         
-        <!-- Screen 3: Judging Screen -->
+        <!-- Screen 6: Judging Screen -->
         <div id="judgingScreen" class="screen">
             <div class="game-main-area">
                 <div class="header">
@@ -800,7 +1340,7 @@
             </div>
         </div>
         
-        <!-- Screen 4: Winner Screen -->
+        <!-- Screen 7: Winner Screen -->
         <div id="winnerScreen" class="screen">
             <div class="game-main-area">
                 <div class="header">
@@ -855,7 +1395,7 @@
             </div>
         </div>
         
-        <!-- Screen 5: Card Collection -->
+        <!-- Screen 8: Card Collection -->
         <div id="collectionScreen" class="screen">
             <div class="header">
                 <h2 style="font-size: 20px;">🃏 Card Collection</h2>
@@ -898,7 +1438,7 @@
             </div>
         </div>
         
-        <!-- Screen 6: Create Cards -->
+        <!-- Screen 9: Create Cards -->
         <div id="createScreen" class="screen">
             <div class="header">
                 <h2 style="font-size: 20px;">✨ Create Cards</h2>
@@ -959,7 +1499,7 @@
             </div>
         </div>
         
-        <!-- Screen 7: Share Cards -->
+        <!-- Screen 10: Share Cards -->
         <div id="shareScreen" class="screen">
             <div class="header">
                 <h2 style="font-size: 20px;">🔗 Share Cards</h2>
@@ -1035,9 +1575,18 @@
         </div>
     </div>
 
+    <!-- Notification Container -->
+    <div id="notificationContainer"></div>
+
     <script>
-        // ==================== GAME STATE ====================
+        // ==================== GLOBAL STATE ====================
         let gameState = {
+            // Authentication
+            user: null,
+            token: null,
+            isGuest: false,
+            
+            // Game State (YOUR ORIGINAL GAME STATE)
             playerName: "Player",
             players: [],
             currentRound: 1,
@@ -1055,8 +1604,8 @@
             },
             submittedCards: [],
             scores: {},
-            winningScore: 7, // Changed to 7
-            handSize: 10, // Changed to 10
+            winningScore: 7,
+            handSize: 10,
             currentBlankCount: 1,
             activeQuestion: null,
             timeLimit: 45,
@@ -1065,12 +1614,20 @@
             timerInterval: null,
             currentJudgeIndex: 0,
             playerHasSubmitted: false,
-            gameActive: false
+            gameActive: false,
+            
+            // Multiplayer
+            socket: null,
+            currentRoom: null,
+            isHost: false,
+            readyPlayers: new Set(),
+            friends: [],
+            onlinePlayers: []
         };
         
         let bots = {};
         
-        // ==================== LARGE DEFAULT COLLECTION ====================
+        // ==================== YOUR ORIGINAL DEFAULT CARDS ====================
         const DEFAULT_ANSWERS = [
             "A fart so powerful it wakes the dead.",
             "My weird uncle.",
@@ -1300,7 +1857,7 @@
             "What's my favorite memory from high school? _____"
         ];
         
-        // ==================== INITIALIZATION ====================
+        // ==================== YOUR ORIGINAL FUNCTIONS ====================
         function initializeCardCollection() {
             const savedCollection = localStorage.getItem('cardCollection');
             
@@ -1380,74 +1937,172 @@
             document.getElementById('menuCustomCount').textContent = customAnswers + customQuestions;
         }
         
-        // ==================== GAME INVITE SYSTEM ====================
-        function generateGameInviteLink() {
-            const playerName = document.getElementById('playerName').value.trim() || "Player";
-            const currentUrl = window.location.origin + window.location.pathname;
+        // ==================== YOUR ORIGINAL GAME FUNCTIONS ====================
+        function startSolitaireGame() {
+            console.log("🎮 Starting solitaire game with 3 bots...");
             
-            // Create a simple invite link with player name encoded
-            const inviteData = {
-                type: 'game_invite',
-                player: playerName,
-                timestamp: new Date().toISOString(),
-                version: '1.0'
+            const playerName = gameState.user ? gameState.user.username : "Player";
+            gameState.playerName = playerName;
+            
+            // Initialize decks FIRST
+            initializeDecks();
+            
+            // Reset game state
+            gameState.players = [];
+            gameState.currentRound = 1;
+            gameState.hand = [];
+            gameState.selectedCards = [];
+            gameState.submittedCards = [];
+            gameState.scores = {};
+            gameState.playerHasSubmitted = false;
+            gameState.currentJudgeIndex = 0;
+            gameState.gameActive = true;
+            gameState.gamePhase = "playing";
+            
+            // Create players - Now with 3 bots
+            const humanPlayer = {
+                id: 'player_human',
+                name: playerName,
+                isHost: true,
+                score: 0,
+                isBot: false
             };
             
-            const jsonString = JSON.stringify(inviteData);
-            const compressed = btoa(encodeURIComponent(jsonString));
-            const inviteUrl = `${currentUrl}?invite=${compressed}`;
+            const bot1 = {
+                id: 'bot_alice',
+                name: 'Bot Alice',
+                isHost: false,
+                score: 0,
+                isBot: true
+            };
             
-            // Update both containers
-            document.getElementById('gameInviteUrl').textContent = inviteUrl;
-            document.getElementById('gameInviteUrlShare').textContent = inviteUrl;
-            document.getElementById('inviteLinkContainer').style.display = 'block';
-            document.getElementById('gameInviteLinkContainer').style.display = 'block';
+            const bot2 = {
+                id: 'bot_bob',
+                name: 'Bot Bob',
+                isHost: false,
+                score: 0,
+                isBot: true
+            };
             
-            // Show alert
-            alert("🎮 Game invite link generated! Share this with friends.\n\nNote: Full multiplayer will be available once server is connected.");
+            const bot3 = {
+                id: 'bot_charlie',
+                name: 'Bot Charlie',
+                isHost: false,
+                score: 0,
+                isBot: true
+            };
+            
+            gameState.players = [humanPlayer, bot1, bot2, bot3];
+            
+            // Initialize scores
+            gameState.players.forEach(player => {
+                gameState.scores[player.id] = 0;
+            });
+            
+            // Initialize bots
+            bots = {};
+            const personalities = ['funny', 'risky', 'safe', 'random'];
+            
+            gameState.players.forEach(player => {
+                if (player.isBot) {
+                    const personality = personalities[Math.floor(Math.random() * personalities.length)];
+                    bots[player.id] = new SmartBot(player.id, player.name, personality);
+                }
+            });
+            
+            // Random judge
+            gameState.currentJudgeIndex = Math.floor(Math.random() * gameState.players.length);
+            gameState.isJudge = (gameState.players[gameState.currentJudgeIndex].id === 'player_human');
+            
+            console.log("Judge:", gameState.players[gameState.currentJudgeIndex].name);
+            
+            // Deal hands (10 cards each)
+            dealHands();
+            
+            // Start first round
+            startRound();
+            
+            // Show game screen
+            showScreen('game');
         }
         
-        function copyGameInviteLink() {
-            const inviteUrl = document.getElementById('gameInviteUrl').textContent || 
-                            document.getElementById('gameInviteUrlShare').textContent;
+        class SmartBot {
+            constructor(id, name, personality = 'random') {
+                this.id = id;
+                this.name = name;
+                this.personality = personality;
+                this.hand = [];
+                this.isBot = true;
+                this.hasSubmitted = false;
+                this.memory = [];
+            }
             
-            if (inviteUrl) {
-                navigator.clipboard.writeText(inviteUrl).then(() => {
-                    alert("✅ Game invite link copied to clipboard!");
-                }).catch(() => {
-                    prompt("Copy this game invite link:", inviteUrl);
+            setHand(cards) {
+                this.hand = [...cards];
+                this.hasSubmitted = false;
+            }
+            
+            refillHand() {
+                while (this.hand.length < gameState.handSize) {
+                    const card = drawAnswerCard();
+                    if (card) {
+                        this.hand.push(card);
+                    } else {
+                        break;
+                    }
+                }
+            }
+            
+            selectCards(blankCount) {
+                const scoredCards = this.hand.map((card, index) => {
+                    let score = Math.random() * 10;
+                    return { index, card, score };
+                });
+                
+                scoredCards.sort((a, b) => b.score - a.score);
+                const selected = scoredCards.slice(0, blankCount).map(c => c.index);
+                
+                if (selected.length === 0 && this.hand.length > 0) {
+                    const indices = [];
+                    while (indices.length < Math.min(blankCount, this.hand.length)) {
+                        const randomIndex = Math.floor(Math.random() * this.hand.length);
+                        if (!indices.includes(randomIndex)) {
+                            indices.push(randomIndex);
+                        }
+                    }
+                    return indices;
+                }
+                
+                return selected;
+            }
+            
+            getSubmissionText(selectedIndices) {
+                if (selectedIndices.length === 0) return "No card selected";
+                if (selectedIndices.length === 1) {
+                    return this.hand[selectedIndices[0]];
+                } else {
+                    return selectedIndices.map(idx => this.hand[idx]);
+                }
+            }
+            
+            removeSelectedCards(selectedIndices) {
+                const sortedIndices = [...selectedIndices].sort((a, b) => b - a);
+                sortedIndices.forEach(index => {
+                    if (index >= 0 && index < this.hand.length) {
+                        this.rememberCard(this.hand[index]);
+                        this.hand.splice(index, 1);
+                    }
                 });
             }
-        }
-        
-        function checkForInvite() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const inviteParam = urlParams.get('invite');
             
-            if (inviteParam) {
-                try {
-                    const decoded = decodeURIComponent(atob(inviteParam));
-                    const invite = JSON.parse(decoded);
-                    
-                    if (invite.type === 'game_invite' && invite.player) {
-                        // Auto-fill player name from invite
-                        document.getElementById('playerName').value = invite.player;
-                        
-                        // Show welcome message
-                        setTimeout(() => {
-                            alert(`🎮 Welcome ${invite.player}!\n\nYou've been invited to play Cards Game!\n\nStart a game with bots or wait for multiplayer support.`);
-                        }, 1000);
-                        
-                        // Clean URL
-                        window.history.replaceState({}, document.title, window.location.pathname);
-                    }
-                } catch (error) {
-                    console.error("Failed to parse invite:", error);
+            rememberCard(card) {
+                this.memory.push(card);
+                if (this.memory.length > 10) {
+                    this.memory.shift();
                 }
             }
         }
         
-        // ==================== DECK MANAGEMENT ====================
         function initializeDecks() {
             // Build answer deck from ENABLED cards only
             const enabledAnswers = gameState.cardCollection.answers
@@ -1543,173 +2198,6 @@
             updateDeckInfo();
         }
         
-        // ==================== GAME START - UPDATED ====================
-        function startSolitaireGame() {
-            console.log("🎮 Starting solitaire game with 3 bots...");
-            
-            const playerName = document.getElementById('playerName').value.trim() || "Player";
-            gameState.playerName = playerName;
-            
-            // Initialize decks FIRST
-            initializeDecks();
-            
-            // Reset game state
-            gameState.players = [];
-            gameState.currentRound = 1;
-            gameState.hand = [];
-            gameState.selectedCards = [];
-            gameState.submittedCards = [];
-            gameState.scores = {};
-            gameState.playerHasSubmitted = false;
-            gameState.currentJudgeIndex = 0;
-            gameState.gameActive = true;
-            gameState.gamePhase = "playing";
-            
-            // Create players - Now with 3 bots
-            const humanPlayer = {
-                id: 'player_human',
-                name: playerName,
-                isHost: true,
-                score: 0,
-                isBot: false
-            };
-            
-            const bot1 = {
-                id: 'bot_alice',
-                name: 'Bot Alice',
-                isHost: false,
-                score: 0,
-                isBot: true
-            };
-            
-            const bot2 = {
-                id: 'bot_bob',
-                name: 'Bot Bob',
-                isHost: false,
-                score: 0,
-                isBot: true
-            };
-            
-            const bot3 = {
-                id: 'bot_charlie',
-                name: 'Bot Charlie',
-                isHost: false,
-                score: 0,
-                isBot: true
-            };
-            
-            gameState.players = [humanPlayer, bot1, bot2, bot3];
-            
-            // Initialize scores
-            gameState.players.forEach(player => {
-                gameState.scores[player.id] = 0;
-            });
-            
-            // Initialize bots
-            bots = {};
-            const personalities = ['funny', 'risky', 'safe', 'random'];
-            
-            gameState.players.forEach(player => {
-                if (player.isBot) {
-                    const personality = personalities[Math.floor(Math.random() * personalities.length)];
-                    bots[player.id] = new SmartBot(player.id, player.name, personality);
-                }
-            });
-            
-            // Random judge
-            gameState.currentJudgeIndex = Math.floor(Math.random() * gameState.players.length);
-            gameState.isJudge = (gameState.players[gameState.currentJudgeIndex].id === 'player_human');
-            
-            console.log("Judge:", gameState.players[gameState.currentJudgeIndex].name);
-            console.log("Total cards in deck:", gameState.deck.length, "answers and", gameState.questionDeck.length, "questions");
-            
-            // Deal hands (10 cards each)
-            dealHands();
-            
-            // Start first round
-            startRound();
-            
-            // Show game screen
-            showScreen('game');
-        }
-        
-        class SmartBot {
-            constructor(id, name, personality = 'random') {
-                this.id = id;
-                this.name = name;
-                this.personality = personality;
-                this.hand = [];
-                this.isBot = true;
-                this.hasSubmitted = false;
-                this.memory = [];
-            }
-            
-            setHand(cards) {
-                this.hand = [...cards];
-                this.hasSubmitted = false;
-            }
-            
-            refillHand() {
-                while (this.hand.length < gameState.handSize) {
-                    const card = drawAnswerCard();
-                    if (card) {
-                        this.hand.push(card);
-                    } else {
-                        break;
-                    }
-                }
-            }
-            
-            selectCards(blankCount) {
-                const scoredCards = this.hand.map((card, index) => {
-                    let score = Math.random() * 10;
-                    return { index, card, score };
-                });
-                
-                scoredCards.sort((a, b) => b.score - a.score);
-                const selected = scoredCards.slice(0, blankCount).map(c => c.index);
-                
-                if (selected.length === 0 && this.hand.length > 0) {
-                    const indices = [];
-                    while (indices.length < Math.min(blankCount, this.hand.length)) {
-                        const randomIndex = Math.floor(Math.random() * this.hand.length);
-                        if (!indices.includes(randomIndex)) {
-                            indices.push(randomIndex);
-                        }
-                    }
-                    return indices;
-                }
-                
-                return selected;
-            }
-            
-            getSubmissionText(selectedIndices) {
-                if (selectedIndices.length === 0) return "No card selected";
-                if (selectedIndices.length === 1) {
-                    return this.hand[selectedIndices[0]];
-                } else {
-                    return selectedIndices.map(idx => this.hand[idx]);
-                }
-            }
-            
-            removeSelectedCards(selectedIndices) {
-                const sortedIndices = [...selectedIndices].sort((a, b) => b - a);
-                sortedIndices.forEach(index => {
-                    if (index >= 0 && index < this.hand.length) {
-                        this.rememberCard(this.hand[index]);
-                        this.hand.splice(index, 1);
-                    }
-                });
-            }
-            
-            rememberCard(card) {
-                this.memory.push(card);
-                if (this.memory.length > 10) {
-                    this.memory.shift();
-                }
-            }
-        }
-        
         function dealHands() {
             // Deal to human (10 cards)
             gameState.hand = [];
@@ -1737,7 +2225,6 @@
             updateDeckInfo();
         }
         
-        // ==================== GAME FUNCTIONS ====================
         function startRound() {
             gameState.gamePhase = "playing";
             gameState.submittedCards = [];
@@ -2047,43 +2534,6 @@
             }
         }
         
-        function displayAllSubmissions(containerId) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            
-            container.innerHTML = '';
-            
-            gameState.submittedCards.forEach((submission, index) => {
-                const submissionDiv = document.createElement('div');
-                submissionDiv.className = 'submission-item';
-                
-                let answersHTML = '';
-                if (Array.isArray(submission.card)) {
-                    answersHTML = `
-                        <div class="multi-answer-container">
-                            ${submission.card.map((card, i) => `
-                                <div class="answer-item">
-                                    <div class="answer-number">${i + 1}</div>
-                                    <div style="font-size: 13px;">${card}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                } else {
-                    answersHTML = `<div style="font-size: 14px; margin: 4px 0;">${submission.card}</div>`;
-                }
-                
-                submissionDiv.innerHTML = `
-                    <div style="font-weight: bold; color: #667eea; margin-bottom: 4px; font-size: 13px;">
-                        ${submission.player}
-                    </div>
-                    ${answersHTML}
-                `;
-                
-                container.appendChild(submissionDiv);
-            });
-        }
-        
         function displayJudgeOptions() {
             const question = gameState.activeQuestion || "What's that smell? _____";
             document.getElementById('judgeQuestion').textContent = question;
@@ -2242,10 +2692,12 @@
         }
         
         function updateDeckInfo() {
-            document.getElementById('answerDeckCount').textContent = gameState.deck.length;
-            document.getElementById('answerDiscardCount').textContent = gameState.discardDeck.length;
-            document.getElementById('questionDeckCount').textContent = gameState.questionDeck.length;
-            document.getElementById('questionDiscardCount').textContent = gameState.questionDiscard.length;
+            if (document.getElementById('answerDeckCount')) {
+                document.getElementById('answerDeckCount').textContent = gameState.deck.length;
+                document.getElementById('answerDiscardCount').textContent = gameState.discardDeck.length;
+                document.getElementById('questionDeckCount').textContent = gameState.questionDeck.length;
+                document.getElementById('questionDiscardCount').textContent = gameState.questionDiscard.length;
+            }
         }
         
         function updateGameUI() {
@@ -2278,7 +2730,44 @@
             });
         }
         
-        // ==================== CREATE CARDS ====================
+        function displayAllSubmissions(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            gameState.submittedCards.forEach((submission, index) => {
+                const submissionDiv = document.createElement('div');
+                submissionDiv.className = 'submission-item';
+                
+                let answersHTML = '';
+                if (Array.isArray(submission.card)) {
+                    answersHTML = `
+                        <div class="multi-answer-container">
+                            ${submission.card.map((card, i) => `
+                                <div class="answer-item">
+                                    <div class="answer-number">${i + 1}</div>
+                                    <div style="font-size: 13px;">${card}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    answersHTML = `<div style="font-size: 14px; margin: 4px 0;">${submission.card}</div>`;
+                }
+                
+                submissionDiv.innerHTML = `
+                    <div style="font-weight: bold; color: #667eea; margin-bottom: 4px; font-size: 13px;">
+                        ${submission.player}
+                    </div>
+                    ${answersHTML}
+                `;
+                
+                container.appendChild(submissionDiv);
+            });
+        }
+        
+        // ==================== YOUR ORIGINAL CARD CREATION FUNCTIONS ====================
         function createCard(type) {
             let textarea, collection;
             
@@ -2350,7 +2839,40 @@
             }
         }
         
-        // ==================== SHARING SYSTEM ====================
+        // ==================== YOUR ORIGINAL SHARING FUNCTIONS ====================
+        function generateGameInviteLink() {
+            const playerName = gameState.user ? gameState.user.username : "Player";
+            const currentUrl = window.location.origin + window.location.pathname;
+            
+            const inviteData = {
+                type: 'game_invite',
+                player: playerName,
+                timestamp: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const jsonString = JSON.stringify(inviteData);
+            const compressed = btoa(encodeURIComponent(jsonString));
+            const inviteUrl = `${currentUrl}?invite=${compressed}`;
+            
+            document.getElementById('gameInviteUrlShare').textContent = inviteUrl;
+            document.getElementById('gameInviteLinkContainer').style.display = 'block';
+            
+            alert("🎮 Game invite link generated! Share this with friends.");
+        }
+        
+        function copyGameInviteLink() {
+            const inviteUrl = document.getElementById('gameInviteUrlShare').textContent;
+            
+            if (inviteUrl) {
+                navigator.clipboard.writeText(inviteUrl).then(() => {
+                    alert("✅ Game invite link copied to clipboard!");
+                }).catch(() => {
+                    prompt("Copy this game invite link:", inviteUrl);
+                });
+            }
+        }
+        
         function generateShareLink() {
             const customCards = {
                 answers: gameState.cardCollection.answers
@@ -2599,7 +3121,7 @@
             }
         }
         
-        // ==================== SCREEN MANAGEMENT ====================
+        // ==================== YOUR ORIGINAL SCREEN FUNCTIONS ====================
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(screen => {
                 screen.classList.remove('active');
@@ -2609,6 +3131,8 @@
             if (screenId === 'collection') {
                 refreshCollection();
             } else if (screenId === 'share') {
+                updateMenuStats();
+            } else if (screenId === 'menu') {
                 updateMenuStats();
             }
         }
@@ -2640,79 +3164,83 @@
         function refreshCollection() {
             // Update answer collection
             const answerContainer = document.getElementById('answerCollection');
-            answerContainer.innerHTML = '';
-            
-            let enabledAnswers = 0;
-            gameState.cardCollection.answers.forEach((card, index) => {
-                const cardDiv = document.createElement('div');
-                cardDiv.className = `card ${card.enabled ? '' : 'disabled'}`;
+            if (answerContainer) {
+                answerContainer.innerHTML = '';
                 
-                cardDiv.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 13px;">${card.text}</span>
-                        <div class="collection-controls">
-                            ${card.isDefault ? 
-                                '<span style="color: #666; font-size: 10px;">Default</span>' : 
-                                ''
-                            }
-                            <button class="${card.enabled ? 'btn-disable' : 'btn-enable'}" 
-                                    onclick="toggleCardEnabled('answers', ${index})">
-                                ${card.enabled ? 'Disable' : 'Enable'}
-                            </button>
-                            ${!card.isDefault ? `
-                                <button class="btn-delete" 
-                                        onclick="deleteCard('answers', ${index})">
-                                    Delete
+                let enabledAnswers = 0;
+                gameState.cardCollection.answers.forEach((card, index) => {
+                    const cardDiv = document.createElement('div');
+                    cardDiv.className = `card ${card.enabled ? '' : 'disabled'}`;
+                    
+                    cardDiv.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 13px;">${card.text}</span>
+                            <div class="collection-controls">
+                                ${card.isDefault ? 
+                                    '<span style="color: #666; font-size: 10px;">Default</span>' : 
+                                    ''
+                                }
+                                <button class="${card.enabled ? 'btn-disable' : 'btn-enable'}" 
+                                        onclick="toggleCardEnabled('answers', ${index})">
+                                    ${card.enabled ? 'Disable' : 'Enable'}
                                 </button>
-                            ` : ''}
+                                ${!card.isDefault ? `
+                                    <button class="btn-delete" 
+                                            onclick="deleteCard('answers', ${index})">
+                                        Delete
+                                    </button>
+                                ` : ''}
+                            </div>
                         </div>
-                    </div>
-                `;
-                answerContainer.appendChild(cardDiv);
+                    `;
+                    answerContainer.appendChild(cardDiv);
+                    
+                    if (card.enabled) enabledAnswers++;
+                });
                 
-                if (card.enabled) enabledAnswers++;
-            });
-            
-            document.getElementById('enabledAnswersCount').textContent = enabledAnswers;
-            document.getElementById('totalAnswersCount').textContent = gameState.cardCollection.answers.length;
+                document.getElementById('enabledAnswersCount').textContent = enabledAnswers;
+                document.getElementById('totalAnswersCount').textContent = gameState.cardCollection.answers.length;
+            }
             
             // Update question collection
             const questionContainer = document.getElementById('questionCollection');
-            questionContainer.innerHTML = '';
-            
-            let enabledQuestions = 0;
-            gameState.cardCollection.questions.forEach((card, index) => {
-                const cardDiv = document.createElement('div');
-                cardDiv.className = `card ${card.enabled ? '' : 'disabled'}`;
+            if (questionContainer) {
+                questionContainer.innerHTML = '';
                 
-                cardDiv.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 13px;">${card.text}</span>
-                        <div class="collection-controls">
-                            ${card.isDefault ? 
-                                '<span style="color: #666; font-size: 10px;">Default</span>' : 
-                                ''
-                            }
-                            <button class="${card.enabled ? 'btn-disable' : 'btn-enable'}" 
-                                    onclick="toggleCardEnabled('questions', ${index})">
-                                ${card.enabled ? 'Disable' : 'Enable'}
-                            </button>
-                            ${!card.isDefault ? `
-                                <button class="btn-delete" 
-                                        onclick="deleteCard('questions', ${index})">
-                                    Delete
+                let enabledQuestions = 0;
+                gameState.cardCollection.questions.forEach((card, index) => {
+                    const cardDiv = document.createElement('div');
+                    cardDiv.className = `card ${card.enabled ? '' : 'disabled'}`;
+                    
+                    cardDiv.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 13px;">${card.text}</span>
+                            <div class="collection-controls">
+                                ${card.isDefault ? 
+                                    '<span style="color: #666; font-size: 10px;">Default</span>' : 
+                                    ''
+                                }
+                                <button class="${card.enabled ? 'btn-disable' : 'btn-enable'}" 
+                                        onclick="toggleCardEnabled('questions', ${index})">
+                                    ${card.enabled ? 'Disable' : 'Enable'}
                                 </button>
-                            ` : ''}
+                                ${!card.isDefault ? `
+                                    <button class="btn-delete" 
+                                            onclick="deleteCard('questions', ${index})">
+                                        Delete
+                                    </button>
+                                ` : ''}
+                            </div>
                         </div>
-                    </div>
-                `;
-                questionContainer.appendChild(cardDiv);
+                    `;
+                    questionContainer.appendChild(cardDiv);
+                    
+                    if (card.enabled) enabledQuestions++;
+                });
                 
-                if (card.enabled) enabledQuestions++;
-            });
-            
-            document.getElementById('enabledQuestionsCount').textContent = enabledQuestions;
-            document.getElementById('totalQuestionsCount').textContent = gameState.cardCollection.questions.length;
+                document.getElementById('enabledQuestionsCount').textContent = enabledQuestions;
+                document.getElementById('totalQuestionsCount').textContent = gameState.cardCollection.questions.length;
+            }
             
             updateMenuStats();
         }
@@ -2760,23 +3288,650 @@
             }
         }
         
-        // ==================== INITIALIZE ====================
-        console.log("🎴 Cards Game Loaded!");
-        initializeCardCollection();
-        loadCardsFromURL();
-        checkForInvite(); // Check for game invites on load
-        
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (gameState.gamePhase === "playing" && !gameState.isJudge && !gameState.playerHasSubmitted) {
-                const key = e.key;
-                const number = parseInt(key);
-                
-                if (number >= 1 && number <= 10) {
-                    selectCard(number - 1);
+        function checkForInvite() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const inviteParam = urlParams.get('invite');
+            
+            if (inviteParam) {
+                try {
+                    const decoded = decodeURIComponent(atob(inviteParam));
+                    const invite = JSON.parse(decoded);
+                    
+                    if (invite.type === 'game_invite' && invite.player) {
+                        // Auto-fill player name from invite
+                        if (document.getElementById('playerName')) {
+                            document.getElementById('playerName').value = invite.player;
+                        }
+                        
+                        // Show welcome message
+                        setTimeout(() => {
+                            alert(`🎮 Welcome ${invite.player}!\n\nYou've been invited to play Cards Game!\n\nStart a game with bots or wait for multiplayer support.`);
+                        }, 1000);
+                        
+                        // Clean URL
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                } catch (error) {
+                    console.error("Failed to parse invite:", error);
                 }
             }
-        });
+        }
+        
+        // ==================== NEW MULTIPLAYER FUNCTIONS ====================
+        async function register() {
+            const username = document.getElementById('registerUsername').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            
+            if (!username || !password) {
+                showNotification('Please enter username and password', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+            
+            if (username.length < 3) {
+                showNotification('Username must be at least 3 characters', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showNotification('Password must be at least 6 characters', 'error');
+                return;
+            }
+            
+            try {
+                // In production, replace with actual API call
+                const response = await mockApiCall('/api/register', {
+                    username,
+                    email: email || null,
+                    password
+                });
+                
+                if (response.success) {
+                    showNotification('Account created successfully!', 'success');
+                    // Auto login after registration
+                    await login(username, password);
+                }
+            } catch (error) {
+                showNotification(error.message || 'Registration failed', 'error');
+            }
+        }
+        
+        async function login(username = null, password = null) {
+            const loginUsername = username || document.getElementById('loginUsername').value.trim();
+            const loginPassword = password || document.getElementById('loginPassword').value;
+            
+            if (!loginUsername || !loginPassword) {
+                showNotification('Please enter username and password', 'error');
+                return;
+            }
+            
+            try {
+                // In production, replace with actual API call
+                const response = await mockApiCall('/api/login', {
+                    username: loginUsername,
+                    password: loginPassword
+                });
+                
+                if (response.success) {
+                    gameState.user = response.user;
+                    gameState.token = response.token;
+                    gameState.isGuest = false;
+                    
+                    // Save user data locally
+                    localStorage.setItem('currentUser', JSON.stringify({
+                        user: gameState.user,
+                        token: gameState.token,
+                        cardCollection: gameState.cardCollection
+                    }));
+                    
+                    // Initialize user data
+                    initializeCardCollection();
+                    
+                    // Connect to WebSocket
+                    connectWebSocket();
+                    
+                    showScreen('menu');
+                    showNotification(`Welcome back, ${gameState.user.username}!`, 'success');
+                }
+            } catch (error) {
+                showNotification(error.message || 'Login failed', 'error');
+            }
+        }
+        
+        function quickLogin() {
+            const guestId = 'guest_' + Math.random().toString(36).substr(2, 9);
+            gameState.user = {
+                id: guestId,
+                username: 'Guest_' + Math.floor(Math.random() * 1000),
+                isGuest: true
+            };
+            gameState.token = null;
+            gameState.isGuest = true;
+            
+            initializeCardCollection();
+            showScreen('menu');
+            showNotification('Playing as guest - data saved locally only', 'warning');
+        }
+        
+        function logout() {
+            if (gameState.socket) {
+                gameState.socket.close();
+            }
+            
+            gameState.user = null;
+            gameState.token = null;
+            gameState.isGuest = false;
+            gameState.currentRoom = null;
+            
+            localStorage.removeItem('currentUser');
+            
+            showScreen('auth');
+            showNotification('Logged out successfully', 'success');
+        }
+        
+        function connectWebSocket() {
+            if (gameState.isGuest) {
+                console.log('Guest mode - WebSocket disabled');
+                return;
+            }
+            
+            const wsUrl = 'ws://localhost:3000'; // Change to your server URL
+            gameState.socket = new WebSocket(wsUrl);
+            
+            gameState.socket.onopen = () => {
+                console.log('WebSocket connected');
+                // Authenticate with server
+                gameState.socket.send(JSON.stringify({
+                    type: 'auth',
+                    token: gameState.token,
+                    user: gameState.user
+                }));
+            };
+            
+            gameState.socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                handleWebSocketMessage(data);
+            };
+            
+            gameState.socket.onclose = () => {
+                console.log('WebSocket disconnected');
+                setTimeout(connectWebSocket, 3000); // Reconnect after 3 seconds
+            };
+            
+            gameState.socket.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+        }
+        
+        function handleWebSocketMessage(data) {
+            switch (data.type) {
+                case 'auth_success':
+                    console.log('Authenticated with server');
+                    break;
+                    
+                case 'online_players':
+                    gameState.onlinePlayers = data.players;
+                    updateOnlinePlayersList();
+                    break;
+                    
+                case 'friends_update':
+                    gameState.friends = data.friends;
+                    updateFriendsList();
+                    break;
+                    
+                case 'room_created':
+                    joinRoom(data.room);
+                    break;
+                    
+                case 'room_joined':
+                    joinRoom(data.room);
+                    break;
+                    
+                case 'room_updated':
+                    updateRoom(data.room);
+                    break;
+                    
+                case 'room_message':
+                    addRoomMessage(data.message);
+                    break;
+                    
+                case 'game_start':
+                    startMultiplayerGame(data.game);
+                    break;
+                    
+                case 'game_update':
+                    updateMultiplayerGame(data.update);
+                    break;
+                    
+                case 'invite_received':
+                    showInviteNotification(data.invite);
+                    break;
+                    
+                case 'notification':
+                    showNotification(data.message, data.level);
+                    break;
+            }
+        }
+        
+        function createPrivateRoom() {
+            const roomName = document.getElementById('roomName').value || 'My Game Room';
+            const maxPlayers = parseInt(document.getElementById('roomMaxPlayers').value);
+            const pointsToWin = parseInt(document.getElementById('roomPointsToWin').value);
+            const enableTimer = document.getElementById('roomEnableTimer').checked;
+            const allowCardCreation = document.getElementById('roomAllowCardCreation').checked;
+            const addBots = document.getElementById('roomAddBots').checked;
+            
+            const roomData = {
+                name: roomName,
+                maxPlayers,
+                pointsToWin,
+                enableTimer,
+                allowCardCreation,
+                isPublic: false,
+                host: gameState.user.id,
+                settings: {
+                    addBots
+                }
+            };
+            
+            if (gameState.socket) {
+                gameState.socket.send(JSON.stringify({
+                    type: 'create_room',
+                    room: roomData
+                }));
+            } else {
+                // Fallback for local/guest mode
+                const roomCode = generateRoomCode();
+                const room = {
+                    ...roomData,
+                    id: 'local_' + Date.now(),
+                    code: roomCode,
+                    players: [{
+                        id: gameState.user.id,
+                        username: gameState.user.username,
+                        isHost: true,
+                        isReady: false
+                    }],
+                    createdAt: new Date().toISOString()
+                };
+                
+                gameState.currentRoom = room;
+                gameState.isHost = true;
+                showRoomLobby(room);
+            }
+        }
+        
+        function generateRoomCode() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let code = '';
+            for (let i = 0; i < 6; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+        
+        function joinRoom(room) {
+            gameState.currentRoom = room;
+            gameState.isHost = room.host === gameState.user.id;
+            gameState.readyPlayers.clear();
+            
+            showRoomLobby(room);
+        }
+        
+        function joinRoomByCode() {
+            const code = document.getElementById('roomCodeInput').value.trim().toUpperCase();
+            if (!code) {
+                showNotification('Please enter a room code', 'error');
+                return;
+            }
+            
+            if (gameState.socket) {
+                gameState.socket.send(JSON.stringify({
+                    type: 'join_room',
+                    code: code
+                }));
+            } else {
+                showNotification('Please login to join rooms', 'error');
+            }
+        }
+        
+        function showRoomLobby(room) {
+            document.getElementById('lobbyRoomName').textContent = room.name;
+            document.getElementById('lobbyRoomCode').textContent = room.code;
+            document.getElementById('lobbyMaxPlayers').textContent = room.maxPlayers;
+            document.getElementById('lobbyInviteCode').textContent = room.code;
+            
+            // Show/hide host controls
+            document.getElementById('hostControls').style.display = gameState.isHost ? 'block' : 'none';
+            
+            updateLobbyPlayers(room.players);
+            showScreen('roomLobby');
+        }
+        
+        function updateLobbyPlayers(players) {
+            const container = document.getElementById('lobbyPlayersList');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            document.getElementById('lobbyPlayerCount').textContent = players.length;
+            
+            players.forEach(player => {
+                const playerDiv = document.createElement('div');
+                playerDiv.className = 'player-online';
+                
+                const isReady = gameState.readyPlayers.has(player.id);
+                
+                playerDiv.innerHTML = `
+                    <div>
+                        <span class="status-indicator ${isReady ? 'status-online' : 'status-ingame'}"></span>
+                        <span style="font-weight: ${player.isHost ? 'bold' : 'normal'}">
+                            ${player.username} ${player.isHost ? '👑' : ''}
+                        </span>
+                    </div>
+                    <div>
+                        ${isReady ? '✅ Ready' : '⏳ Not Ready'}
+                        ${gameState.isHost && !player.isHost ? 
+                            `<button class="small-btn btn-danger" onclick="kickPlayer('${player.id}')">Kick</button>` : 
+                            ''
+                        }
+                    </div>
+                `;
+                
+                container.appendChild(playerDiv);
+            });
+        }
+        
+        function readyToggle() {
+            const button = document.getElementById('readyButton');
+            const isReady = button.textContent.includes('Ready');
+            
+            if (isReady) {
+                button.innerHTML = '⏳ Not Ready';
+                button.classList.remove('btn-success');
+                button.classList.add('btn-warning');
+                gameState.readyPlayers.delete(gameState.user.id);
+            } else {
+                button.innerHTML = '✅ Ready';
+                button.classList.remove('btn-warning');
+                button.classList.add('btn-success');
+                gameState.readyPlayers.add(gameState.user.id);
+            }
+            
+            if (gameState.socket && gameState.currentRoom) {
+                gameState.socket.send(JSON.stringify({
+                    type: 'player_ready',
+                    roomId: gameState.currentRoom.id,
+                    isReady: !isReady
+                }));
+            }
+        }
+        
+        function leaveRoom() {
+            if (gameState.socket && gameState.currentRoom) {
+                gameState.socket.send(JSON.stringify({
+                    type: 'leave_room',
+                    roomId: gameState.currentRoom.id
+                }));
+            }
+            
+            gameState.currentRoom = null;
+            gameState.isHost = false;
+            gameState.readyPlayers.clear();
+            showScreen('menu');
+        }
+        
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.style.background = type === 'error' ? '#f44336' : 
+                                          type === 'success' ? '#4CAF50' : 
+                                          type === 'warning' ? '#FF9800' : '#333';
+            
+            notification.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 14px;">${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="background: none; border: none; color: white; font-size: 16px; cursor: pointer; margin-left: 10px;">
+                        ×
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+        
+        function mockApiCall(endpoint, data) {
+            // Simulate API call delay
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    if (endpoint === '/api/register') {
+                        // Mock registration
+                        const user = {
+                            id: 'user_' + Date.now(),
+                            username: data.username,
+                            email: data.email,
+                            createdAt: new Date().toISOString()
+                        };
+                        
+                        localStorage.setItem('user_' + data.username, JSON.stringify({
+                            user,
+                            password: data.password // In real app, this would be hashed
+                        }));
+                        
+                        resolve({
+                            success: true,
+                            user,
+                            token: 'mock_jwt_token_' + Date.now()
+                        });
+                    } else if (endpoint === '/api/login') {
+                        // Mock login
+                        const stored = localStorage.getItem('user_' + data.username);
+                        if (!stored) {
+                            reject(new Error('User not found'));
+                            return;
+                        }
+                        
+                        const userData = JSON.parse(stored);
+                        if (userData.password !== data.password) {
+                            reject(new Error('Invalid password'));
+                            return;
+                        }
+                        
+                        resolve({
+                            success: true,
+                            user: userData.user,
+                            token: 'mock_jwt_token_' + Date.now()
+                        });
+                    } else {
+                        reject(new Error('API endpoint not found'));
+                    }
+                }, 500);
+            });
+        }
+        
+        function updateOnlinePlayersList() {
+            const container = document.getElementById('onlinePlayersList');
+            if (!container) return;
+            
+            if (gameState.onlinePlayers.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; font-size: 13px;">No players online</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            gameState.onlinePlayers.forEach(player => {
+                const playerDiv = document.createElement('div');
+                playerDiv.className = 'player-online';
+                
+                playerDiv.innerHTML = `
+                    <div>
+                        <span class="status-indicator ${player.status === 'online' ? 'status-online' : 'status-ingame'}"></span>
+                        <span>${player.username}</span>
+                    </div>
+                    <div>
+                        <button class="small-btn btn-secondary" onclick="sendFriendRequest('${player.username}')">
+                            Add
+                        </button>
+                        <button class="small-btn" onclick="inviteToGame('${player.id}')">
+                            Invite
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(playerDiv);
+            });
+        }
+        
+        function updateFriendsList() {
+            const container = document.getElementById('friendsList');
+            if (!container) return;
+            
+            if (gameState.friends.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; font-size: 13px;">No friends yet</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            gameState.friends.forEach(friend => {
+                const friendDiv = document.createElement('div');
+                friendDiv.className = 'friend-item';
+                
+                friendDiv.innerHTML = `
+                    <div>
+                        <span class="status-indicator ${friend.online ? 'status-online' : 'status-offline'}"></span>
+                        <span>${friend.username}</span>
+                    </div>
+                    <div>
+                        ${friend.online ? 
+                            `<button class="small-btn btn-success" onclick="inviteToGame('${friend.id}')">
+                                Invite
+                            </button>` : 
+                            '<span style="color: #999; font-size: 11px;">Offline</span>'
+                        }
+                        <button class="small-btn btn-danger" onclick="removeFriend('${friend.id}')">
+                            Remove
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(friendDiv);
+            });
+        }
+        
+        function switchMenuTab(tabId) {
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelector(`[onclick="switchMenuTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId + 'Tab').classList.add('active');
+            
+            if (tabId === 'social' && gameState.socket) {
+                // Request fresh online players list
+                gameState.socket.send(JSON.stringify({
+                    type: 'get_online_players'
+                }));
+            }
+        }
+        
+        // Initialize on load
+        window.onload = function() {
+            // Check if user is already logged in
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                try {
+                    const userData = JSON.parse(savedUser);
+                    gameState.user = userData.user;
+                    gameState.token = userData.token;
+                    
+                    if (userData.cardCollection) {
+                        gameState.cardCollection = userData.cardCollection;
+                    } else {
+                        initializeCardCollection();
+                    }
+                    
+                    showScreen('menu');
+                    connectWebSocket();
+                } catch (error) {
+                    console.error('Failed to load saved user:', error);
+                    showScreen('auth');
+                }
+            } else {
+                showScreen('auth');
+                initializeCardCollection();
+            }
+            
+            loadCardsFromURL();
+            checkForInvite();
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (gameState.gamePhase === "playing" && !gameState.isJudge && !gameState.playerHasSubmitted) {
+                    const key = e.key;
+                    const number = parseInt(key);
+                    
+                    if (number >= 1 && number <= 10) {
+                        selectCard(number - 1);
+                    }
+                }
+                
+                if (e.key === 'Escape' && !document.getElementById('authScreen').classList.contains('active')) {
+                    if (confirm('Return to main menu?')) {
+                        showScreen('menu');
+                    }
+                }
+            });
+        };
+        
+        // Export all functions to global scope
+        window.showScreen = showScreen;
+        window.switchMenuTab = switchMenuTab;
+        window.switchCollectionTab = switchCollectionTab;
+        window.switchCreateTab = switchCreateTab;
+        window.login = login;
+        window.register = register;
+        window.quickLogin = quickLogin;
+        window.logout = logout;
+        window.createPrivateRoom = createPrivateRoom;
+        window.joinRoomByCode = joinRoomByCode;
+        window.readyToggle = readyToggle;
+        window.leaveRoom = leaveRoom;
+        window.startSolitaireGame = startSolitaireGame;
+        window.createCard = createCard;
+        window.addCreateBlank = addCreateBlank;
+        window.removeCreateBlank = removeCreateBlank;
+        window.generateShareLink = generateShareLink;
+        window.copyShareLink = copyShareLink;
+        window.importFromUrl = importFromUrl;
+        window.exportCardsToFile = exportCardsToFile;
+        window.importCardsFromFile = importCardsFromFile;
+        window.generateGameInviteLink = generateGameInviteLink;
+        window.copyGameInviteLink = copyGameInviteLink;
+        window.toggleCardEnabled = toggleCardEnabled;
+        window.deleteCard = deleteCard;
+        window.enableAllCards = enableAllCards;
+        window.submitCard = submitCard;
+        window.forceBotSubmission = forceBotSubmission;
+        window.returnToMenu = returnToMenu;
+        window.forceRandomWinner = forceRandomWinner;
+        window.continueToNextRound = continueToNextRound;
     </script>
 </body>
-</html>
+    </html>

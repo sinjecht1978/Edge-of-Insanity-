@@ -100,7 +100,42 @@ io.on('connection', (socket) => {
       });
     }
   });
+  // Start game - ADD THIS NEW HANDLER
+socket.on('start_game', (data) => {
+  const roomCode = data.roomCode;
+  const room = rooms.get(roomCode);
   
+  if (!room) {
+    socket.emit('game_error', { message: 'Room not found' });
+    return;
+  }
+  
+  // Only host can start game
+  if (room.host !== socket.id) {
+    socket.emit('game_error', { message: 'Only host can start game' });
+    return;
+  }
+  
+  // Need at least 2 players (or 1 human + bots)
+  if (room.players.length < 2) {
+    socket.emit('game_error', { message: 'Need at least 2 players to start' });
+    return;
+  }
+  
+  // Change game state
+  room.gameState = 'playing';
+  room.currentRound = 1;
+  room.judgeIndex = 0;
+  
+  // Notify all players
+  io.to(roomCode).emit('game_started', {
+    room: room,
+    message: 'Game is starting!',
+    round: 1
+  });
+  
+  console.log(`🎮 Game started in room ${roomCode} by ${players.get(socket.id)?.username}`);
+});
   // Chat message
   socket.on('room_chat', (data) => {
     const player = players.get(socket.id);

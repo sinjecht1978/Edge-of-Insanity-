@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -817,6 +816,24 @@
             justify-content: space-between;
             align-items: center;
         }
+        
+        .anonymous-card {
+            background: #f8f9fa;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .anonymous-label {
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
     </style>
 
     <!-- Add these AFTER your <style> block -->
@@ -1312,13 +1329,13 @@ if ('serviceWorker' in navigator) {
                     
                     <!-- Action Buttons -->
                     <div class="action-buttons">
-                        <button class="btn" onclick="submitCard()" id="submitBtn" disabled>
+                        <button class="btn" id="submitBtn">
                             Submit Card
                         </button>
-                        <button class="btn btn-warning" onclick="forceBotSubmission()">
+                        <button class="btn btn-warning" id="forceBotsBtn">
                             Force Bots
                         </button>
-                        <button class="btn" onclick="returnToMenu()">
+                        <button class="btn" id="quitBtn">
                             Quit Game
                         </button>
                     </div>
@@ -1335,7 +1352,7 @@ if ('serviceWorker' in navigator) {
                         Loading question...
                     </div>
                     <p style="margin: 8px 0; font-size: 14px; color: #666;">
-                        Select the best answer:
+                        Select the best answer (all submissions are anonymous):
                     </p>
                     <div style="color: #4CAF50; font-weight: bold; padding: 4px 10px; background: #e8f5e9; border-radius: 12px; display: inline-block; font-size: 11px;">
                         ⚖️ You are the Judge
@@ -1347,10 +1364,10 @@ if ('serviceWorker' in navigator) {
                     </div>
                     
                     <div class="action-buttons">
-                        <button class="btn btn-warning" onclick="forceRandomWinner()">
+                        <button class="btn btn-warning" id="randomWinnerBtn">
                             Pick Random Winner
                         </button>
-                        <button class="btn" onclick="returnToMenu()">
+                        <button class="btn" id="quitJudgeBtn">
                             Quit Game
                         </button>
                     </div>
@@ -1402,10 +1419,10 @@ if ('serviceWorker' in navigator) {
                     </div>
                     
                     <div class="action-buttons">
-                        <button class="btn btn-success" onclick="continueToNextRound()" id="nextRoundBtn">
+                        <button class="btn btn-success" id="nextRoundBtn">
                             Next Round
                         </button>
-                        <button class="btn" onclick="returnToMenu()">
+                        <button class="btn" id="backToMenuBtn">
                             Back to Menu
                         </button>
                     </div>
@@ -1875,7 +1892,496 @@ if ('serviceWorker' in navigator) {
             "What's my favorite memory from high school? _____"
         ];
         
-        // ==================== YOUR ORIGINAL FUNCTIONS ====================
+        // ==================== NEW FIXED FUNCTIONS ====================
+        
+        function attachGameEventListeners() {
+            console.log('🔗 Attaching game event listeners...');
+            
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) {
+                submitBtn.onclick = function() {
+                    console.log('Submit button clicked');
+                    if (gameState.currentRoom) {
+                        handleMultiplayerSubmit();
+                    } else {
+                        submitCard();
+                    }
+                };
+            }
+            
+            const forceBotsBtn = document.getElementById('forceBotsBtn');
+            if (forceBotsBtn) {
+                forceBotsBtn.onclick = function() {
+                    console.log('Force bots button clicked');
+                    forceBotSubmission();
+                };
+            }
+            
+            const quitBtn = document.getElementById('quitBtn');
+            if (quitBtn) {
+                quitBtn.onclick = function() {
+                    console.log('Quit button clicked');
+                    returnToMenu();
+                };
+            }
+            
+            // Judging screen buttons
+            const randomWinnerBtn = document.getElementById('randomWinnerBtn');
+            if (randomWinnerBtn) {
+                randomWinnerBtn.onclick = function() {
+                    console.log('Random winner button clicked');
+                    forceRandomWinner();
+                };
+            }
+            
+            const quitJudgeBtn = document.getElementById('quitJudgeBtn');
+            if (quitJudgeBtn) {
+                quitJudgeBtn.onclick = function() {
+                    console.log('Quit judge button clicked');
+                    returnToMenu();
+                };
+            }
+            
+            // Winner screen buttons
+            const nextRoundBtn = document.getElementById('nextRoundBtn');
+            if (nextRoundBtn) {
+                nextRoundBtn.onclick = function() {
+                    console.log('Next round button clicked');
+                    continueToNextRound();
+                };
+            }
+            
+            const backToMenuBtn = document.getElementById('backToMenuBtn');
+            if (backToMenuBtn) {
+                backToMenuBtn.onclick = function() {
+                    console.log('Back to menu button clicked');
+                    returnToMenu();
+                };
+            }
+            
+            console.log('✅ All game event listeners attached');
+        }
+        
+        function startGameFromLobby() {
+            console.log('=== START GAME FROM LOBBY ===');
+            console.log('Room:', gameState.currentRoom?.code);
+            console.log('Socket:', !!gameState.socket);
+            console.log('Host:', gameState.isHost);
+            
+            if (!gameState.currentRoom) {
+                alert('Not connected to a room!');
+                return;
+            }
+            
+            if (!gameState.isHost) {
+                alert('Only the host can start the game!');
+                return;
+            }
+            
+            // Start the game
+            if (gameState.socket) {
+                console.log('🚀 Sending start_game to server...');
+                gameState.socket.emit('start_game', {
+                    roomCode: gameState.currentRoom.code
+                });
+            } else {
+                // Fallback for local testing
+                startMultiplayerGameLocally();
+            }
+        }
+        
+        function startMultiplayerGameLocally() {
+            console.log('🎮 Starting multiplayer game locally...');
+            
+            gameState.gamePhase = "playing";
+            gameState.gameActive = true;
+            gameState.currentRound = 1;
+            gameState.isJudge = false;
+            
+            // Initialize decks
+            initializeDecks();
+            
+            // Reset game state
+            gameState.hand = [];
+            gameState.selectedCards = [];
+            gameState.submittedCards = [];
+            gameState.scores = {};
+            gameState.playerHasSubmitted = false;
+            gameState.currentJudgeIndex = 0;
+            
+            // Create local player
+            const playerName = gameState.user ? gameState.user.username : "Player";
+            const localPlayer = {
+                id: 'player_local',
+                name: playerName,
+                isHost: true,
+                score: 0,
+                isBot: false
+            };
+            
+            // Get players from room
+            gameState.players = gameState.currentRoom.players || [localPlayer];
+            
+            // Initialize scores
+            gameState.players.forEach(player => {
+                gameState.scores[player.id] = 0;
+            });
+            
+            // Random judge
+            gameState.currentJudgeIndex = Math.floor(Math.random() * gameState.players.length);
+            gameState.isJudge = (gameState.players[gameState.currentJudgeIndex].id === 'player_local');
+            
+            // Deal hands
+            dealMultiplayerHands();
+            
+            // Show game screen and attach listeners
+            showScreen('game');
+            setTimeout(() => {
+                attachGameEventListeners();
+                startRound();
+            }, 100);
+        }
+        
+        function handleMultiplayerSubmit() {
+            if (gameState.isJudge) {
+                alert("You are the judge! You cannot submit cards this round.");
+                return;
+            }
+            
+            if (gameState.playerHasSubmitted) {
+                alert("You have already submitted for this round!");
+                return;
+            }
+            
+            if (gameState.selectedCards.length !== gameState.currentBlankCount) {
+                alert(`Please select exactly ${gameState.currentBlankCount} card(s) for this question.`);
+                return;
+            }
+            
+            const selectedCardTexts = gameState.selectedCards.map(index => gameState.hand[index]);
+            
+            // Send to server if multiplayer
+            if (gameState.socket && gameState.currentRoom) {
+                gameState.socket.emit('submit_cards', {
+                    roomId: gameState.currentRoom.id,
+                    cards: selectedCardTexts,
+                    playerId: gameState.user.id
+                });
+            }
+            
+            // Update local state
+            const sortedIndices = [...gameState.selectedCards].sort((a, b) => b - a);
+            sortedIndices.forEach(index => {
+                gameState.hand.splice(index, 1);
+            });
+            
+            // Draw new cards
+            for (let i = 0; i < sortedIndices.length; i++) {
+                const newCard = drawAnswerCard();
+                if (newCard) {
+                    gameState.hand.push(newCard);
+                }
+            }
+            
+            // Create anonymous submission
+            gameState.submittedCards.push({
+                player: "Anonymous",
+                playerId: gameState.user.id,
+                card: selectedCardTexts.length === 1 ? selectedCardTexts[0] : selectedCardTexts,
+                isAnonymous: true
+            });
+            
+            gameState.playerHasSubmitted = true;
+            gameState.selectedCards = [];
+            
+            updatePlayerHand();
+            updateStatusText();
+            updateDeckInfo();
+            updateGamePlayers();
+            
+            // Disable submit button
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) submitBtn.disabled = true;
+            
+            // If single-player, trigger bots
+            if (!gameState.currentRoom) {
+                setTimeout(() => {
+                    submitBotsCards();
+                }, 1500);
+            }
+        }
+        
+        function dealMultiplayerHands() {
+            // Deal to local player (10 cards)
+            gameState.hand = [];
+            for (let i = 0; i < gameState.handSize; i++) {
+                const card = drawAnswerCard();
+                if (card) {
+                    gameState.hand.push(card);
+                }
+            }
+            
+            updatePlayerHand();
+            updateGamePlayers();
+            updateDeckInfo();
+        }
+        
+        function displayJudgeOptions() {
+            const question = gameState.activeQuestion || "What's that smell? _____";
+            document.getElementById('judgeQuestion').textContent = question;
+            
+            const optionsContainer = document.getElementById('judgeOptions');
+            optionsContainer.innerHTML = '';
+            
+            // Shuffle submissions for anonymity
+            const shuffledSubmissions = [...gameState.submittedCards];
+            for (let i = shuffledSubmissions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledSubmissions[i], shuffledSubmissions[j]] = [shuffledSubmissions[j], shuffledSubmissions[i]];
+            }
+            
+            shuffledSubmissions.forEach((submission, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'judge-option';
+                
+                let answersHTML = '';
+                if (Array.isArray(submission.card)) {
+                    answersHTML = `
+                        <div class="anonymous-card">
+                            <div class="anonymous-label">Submission ${index + 1}</div>
+                            <div class="multi-answer-container">
+                                ${submission.card.map((card, i) => `
+                                    <div class="answer-item">
+                                        <div class="answer-number">${i + 1}</div>
+                                        <div style="font-size: 13px;">${card}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    answersHTML = `
+                        <div class="anonymous-card">
+                            <div class="anonymous-label">Submission ${index + 1}</div>
+                            <div style="font-size: 14px; margin: 4px 0;">${submission.card}</div>
+                        </div>
+                    `;
+                }
+                
+                optionDiv.innerHTML = `
+                    <div style="font-size: 16px; color: #667eea; margin-bottom: 4px;">Option ${index + 1}</div>
+                    ${answersHTML}
+                    <div style="color: #666; font-size: 11px; margin-top: 4px;">Anonymous Submission</div>
+                `;
+                
+                optionDiv.onclick = () => selectWinner(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+        }
+        
+        function showWinnerScreen(winner, gameWinner) {
+            gameState.gamePhase = "winner";
+            
+            document.getElementById('winnerQuestion').textContent = gameState.activeQuestion;
+            
+            // Display all submissions WITH player names now
+            displayAllSubmissionsWithNames('winnerSubmissions');
+            
+            let winnerText = '';
+            if (Array.isArray(winner.card)) {
+                winnerText = winner.card.map((card, i) => `
+                    <div style="margin: 3px 0; padding-left: 12px; font-size: 14px;">
+                        <span style="color: #FFD700; font-weight: bold;">${i + 1}.</span> ${card}
+                    </div>
+                `).join('');
+            } else {
+                winnerText = `<div style="font-size: 16px; margin: 6px 0;">"${winner.card}"</div>`;
+            }
+            
+            // Show the actual winner's name
+            document.getElementById('winnerDetails').innerHTML = `
+                <div style="color: #4CAF50; font-weight: bold; font-size: 15px;">Winner: ${winner.player}</div>
+                ${winnerText}
+                <div style="margin-top: 6px; color: #4CAF50; font-weight: bold;">🎉 Round Winner! 🎉</div>
+            `;
+            
+            const winnerScore = gameState.scores[winner.playerId] || 0;
+            document.getElementById('winnerScore').textContent = winnerScore;
+            document.getElementById('roundsPlayed').textContent = gameState.currentRound;
+            document.getElementById('deckSize').textContent = gameState.deck.length;
+            
+            if (gameWinner) {
+                const winnerPlayer = gameState.players.find(p => p.id === gameWinner);
+                if (winnerPlayer) {
+                    document.getElementById('winnerDetails').innerHTML += `
+                        <div style="margin-top: 10px; font-size: 18px; color: #FFD700;">
+                            🏆 GAME WINNER: ${winnerPlayer.name}! 🏆
+                        </div>
+                        <div style="color: #666; font-size: 13px;">Final Score: ${gameState.scores[gameWinner]} points (First to 7)</div>
+                    `;
+                    document.getElementById('nextRoundBtn').style.display = 'none';
+                    gameState.gameActive = false;
+                }
+            } else {
+                document.getElementById('nextRoundBtn').style.display = 'inline-block';
+            }
+            
+            showScreen('winner');
+        }
+        
+        function displayAllSubmissionsWithNames(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            gameState.submittedCards.forEach((submission, index) => {
+                const submissionDiv = document.createElement('div');
+                submissionDiv.className = 'submission-item';
+                
+                let answersHTML = '';
+                if (Array.isArray(submission.card)) {
+                    answersHTML = `
+                        <div class="multi-answer-container">
+                            ${submission.card.map((card, i) => `
+                                <div class="answer-item">
+                                    <div class="answer-number">${i + 1}</div>
+                                    <div style="font-size: 13px;">${card}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    answersHTML = `<div style="font-size: 14px; margin: 4px 0;">${submission.card}</div>`;
+                }
+                
+                submissionDiv.innerHTML = `
+                    <div style="font-weight: bold; color: #667eea; margin-bottom: 4px; font-size: 13px;">
+                        ${submission.player} ${submission.playerId === gameState.user.id ? '(You)' : ''}
+                    </div>
+                    ${answersHTML}
+                `;
+                
+                container.appendChild(submissionDiv);
+            });
+        }
+        
+        // ==================== SOCKET.IO SETUP ====================
+        
+        function connectWebSocket() {
+            if (gameState.isGuest) {
+                console.log('Guest mode - WebSocket disabled');
+                return;
+            }
+            
+            // Connect to your Socket.IO server
+            const socket = io(window.location.origin, {
+                transports: ['websocket', 'polling']
+            });
+            
+            gameState.socket = socket;
+            
+            socket.on('connect', () => {
+                console.log('✅ Connected to server with ID:', socket.id);
+                
+                // Authenticate with server
+                socket.emit('authenticate', {
+                    token: gameState.token,
+                    user: gameState.user
+                });
+            });
+            
+            socket.on('authenticated', (data) => {
+                console.log('✅ Authenticated successfully');
+                gameState.user.socketId = socket.id;
+            });
+            
+            socket.on('room_created', (room) => {
+                console.log('🏠 Room created:', room.code);
+                gameState.currentRoom = room;
+                gameState.isHost = room.host === gameState.user.id;
+                showRoomLobby(room);
+            });
+            
+            socket.on('room_joined', (room) => {
+                console.log('🎮 Joined room:', room.code);
+                gameState.currentRoom = room;
+                gameState.isHost = room.host === gameState.user.id;
+                showRoomLobby(room);
+            });
+            
+            socket.on('room_updated', (room) => {
+                console.log('🔄 Room updated');
+                gameState.currentRoom = room;
+                updateLobbyPlayers(room.players);
+            });
+            
+            socket.on('game_started', (data) => {
+                console.log('🎮 Game started!', data);
+                
+                // Initialize multiplayer game
+                gameState.gamePhase = "playing";
+                gameState.gameActive = true;
+                gameState.players = data.players || [];
+                gameState.currentRound = 1;
+                gameState.isJudge = data.judgeIndex === 0;
+                
+                // Initialize decks
+                initializeDecks();
+                
+                // Deal hands
+                dealMultiplayerHands();
+                
+                // Show game screen
+                showScreen('game');
+                
+                // Attach event listeners
+                setTimeout(() => {
+                    attachGameEventListeners();
+                    startRound();
+                }, 100);
+            });
+            
+            socket.on('player_submitted', (data) => {
+                console.log('📝 Player submitted:', data.playerId);
+                
+                // Add anonymous submission
+                gameState.submittedCards.push({
+                    player: "Anonymous",
+                    playerId: data.playerId,
+                    card: data.cards,
+                    isAnonymous: true
+                });
+                
+                updateGamePlayers();
+            });
+            
+            socket.on('round_ended', (data) => {
+                console.log('🏁 Round ended');
+                gameState.gamePhase = "judging";
+                if (gameState.isJudge) {
+                    showScreen('judging');
+                    displayJudgeOptions();
+                }
+            });
+            
+            socket.on('winner_selected', (data) => {
+                console.log('🏆 Winner selected:', data.winner);
+                showWinnerScreen(data.winner, data.gameWinner);
+            });
+            
+            socket.on('disconnect', () => {
+                console.log('❌ Disconnected from server');
+            });
+            
+            socket.on('error', (error) => {
+                console.error('Socket error:', error);
+                showNotification(error.message || 'Connection error', 'error');
+            });
+        }
+        
+        // ==================== YOUR ORIGINAL FUNCTIONS (MODIFIED) ====================
+        
         function initializeCardCollection() {
             const savedCollection = localStorage.getItem('cardCollection');
             
@@ -1954,58 +2460,7 @@ if ('serviceWorker' in navigator) {
             document.getElementById('menuQuestionCount').textContent = totalQuestions;
             document.getElementById('menuCustomCount').textContent = customAnswers + customQuestions;
         }
-function startGameFromLobby() {
-  console.log('=== START GAME DEBUG ===');
-  console.log('Room:', gameState.currentRoom?.code);
-  console.log('Socket:', !!gameState.socket);
-  console.log('Host flag:', gameState.isHost);
-  
-  // Quick check: are we even connected?
-  if (!gameState.currentRoom || !gameState.socket) {
-    alert('Not connected to a room!');
-    return;
-  }
-  
-  // EMERGENCY: Just try it anyway!
-  console.log('🚀 Sending start_game to server...');
-  gameState.socket.emit('start_game', {
-    roomCode: gameState.currentRoom.code
-  });
-  
-  alert('Start game request sent to server!');
-}
-
-// Socket listeners for game events
-if (gameState.socket) {
-  gameState.socket.on('game_started', (data) => {
-    console.log('✅ Game started!', data);
-    showScreen('game');
-  });
-
-  gameState.socket.on('game_error', (data) => {
-    alert('❌ Game error: ' + data.message);
-  });
-    // Socket listeners for game events
-if (gameState.socket) {
-  gameState.socket.on('game_started', (data) => {
-    console.log('✅ Game started!', data);
-    
-    // Initialize multiplayer game
-    gameState.gamePhase = "playing";
-    gameState.gameActive = true;
-    gameState.players = data.room.players;
-    gameState.currentRound = 1;
-    gameState.isJudge = data.room.judgeIndex === 0;
-    
-    showScreen('game');
-    startRound();  // Start first round
-  });
-
-  gameState.socket.on('game_error', (data) => {
-    alert('❌ Game error: ' + data.message);
-  });
-}
-        // ==================== YOUR ORIGINAL GAME FUNCTIONS ====================
+        
         function startSolitaireGame() {
             console.log("🎮 Starting solitaire game with 3 bots...");
             
@@ -2087,11 +2542,12 @@ if (gameState.socket) {
             // Deal hands (10 cards each)
             dealHands();
             
-            // Start first round
-            startRound();
-            
-            // Show game screen
+            // Show game screen and attach listeners
             showScreen('game');
+            setTimeout(() => {
+                attachGameEventListeners();
+                startRound();
+            }, 100);
         }
         
         class SmartBot {
@@ -2313,7 +2769,10 @@ if (gameState.socket) {
             document.getElementById('questionDisplay').textContent = question;
             document.getElementById('roundNumber').textContent = gameState.currentRound;
             document.getElementById('currentJudgeName').textContent = gameState.players[gameState.currentJudgeIndex].name;
-            document.getElementById('nextRoundBtn').style.display = 'inline-block';
+            
+            // Enable submit button
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) submitBtn.disabled = false;
             
             updateStatusText();
             startTimer();
@@ -2431,7 +2890,7 @@ if (gameState.socket) {
                 statusText.textContent = "You are the judge. Waiting for submissions...";
                 selectedCountInfo.textContent = "";
             } else if (gameState.playerHasSubmitted) {
-                statusText.textContent = "Card submitted! Waiting for bots...";
+                statusText.textContent = "Card submitted! Waiting for other players...";
                 selectedCountInfo.textContent = "";
             } else {
                 statusText.textContent = "Select card(s) from your hand";
@@ -2492,10 +2951,12 @@ if (gameState.socket) {
                 }
             }
             
+            // Create anonymous submission
             gameState.submittedCards.push({
-                player: gameState.playerName,
+                player: "Anonymous",
                 playerId: 'player_human',
-                card: selectedCardTexts.length === 1 ? selectedCardTexts[0] : selectedCardTexts
+                card: selectedCardTexts.length === 1 ? selectedCardTexts[0] : selectedCardTexts,
+                isAnonymous: true
             });
             
             gameState.playerHasSubmitted = true;
@@ -2544,10 +3005,12 @@ if (gameState.socket) {
                 
                 const submissionCards = bot.getSubmissionText(selectedIndices);
                 
+                // Create anonymous bot submission
                 gameState.submittedCards.push({
-                    player: bot.name,
+                    player: "Anonymous",
                     playerId: bot.id,
-                    card: submissionCards
+                    card: submissionCards,
+                    isAnonymous: true
                 });
                 
                 bot.removeSelectedCards(selectedIndices);
@@ -2602,48 +3065,16 @@ if (gameState.socket) {
             }
         }
         
-        function displayJudgeOptions() {
-            const question = gameState.activeQuestion || "What's that smell? _____";
-            document.getElementById('judgeQuestion').textContent = question;
-            
-            const optionsContainer = document.getElementById('judgeOptions');
-            optionsContainer.innerHTML = '';
-            
-            gameState.submittedCards.forEach((submission, index) => {
-                const optionDiv = document.createElement('div');
-                optionDiv.className = 'judge-option';
-                
-                let answersHTML = '';
-                if (Array.isArray(submission.card)) {
-                    answersHTML = `
-                        <div class="multi-answer-container">
-                            ${submission.card.map((card, i) => `
-                                <div class="answer-item">
-                                    <div class="answer-number">${i + 1}</div>
-                                    <div style="font-size: 13px;">${card}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                } else {
-                    answersHTML = `<div style="font-size: 14px; margin: 4px 0;">${submission.card}</div>`;
-                }
-                
-                optionDiv.innerHTML = `
-                    <div style="font-size: 16px; color: #667eea; margin-bottom: 4px;">Option ${index + 1}</div>
-                    ${answersHTML}
-                    <div style="color: #666; font-size: 11px; margin-top: 4px;">From: ${submission.player}</div>
-                `;
-                
-                optionDiv.onclick = () => selectWinner(index);
-                optionsContainer.appendChild(optionDiv);
-            });
-        }
-        
         function selectWinner(index) {
             if (index < 0 || index >= gameState.submittedCards.length) return;
             
             const winner = gameState.submittedCards[index];
+            
+            // Reveal the actual player name for the winner
+            const winnerPlayer = gameState.players.find(p => p.id === winner.playerId);
+            if (winnerPlayer) {
+                winner.player = winnerPlayer.name;
+            }
             
             if (gameState.scores[winner.playerId] !== undefined) {
                 gameState.scores[winner.playerId]++;
@@ -2676,55 +3107,6 @@ if (gameState.socket) {
                 }
             }
             return null;
-        }
-        
-        function showWinnerScreen(winner, gameWinner) {
-            gameState.gamePhase = "winner";
-            
-            // Set question on winner screen
-            document.getElementById('winnerQuestion').textContent = gameState.activeQuestion;
-            
-            displayAllSubmissions('winnerSubmissions');
-            
-            let winnerText = '';
-            if (Array.isArray(winner.card)) {
-                winnerText = winner.card.map((card, i) => `
-                    <div style="margin: 3px 0; padding-left: 12px; font-size: 14px;">
-                        <span style="color: #FFD700; font-weight: bold;">${i + 1}.</span> ${card}
-                    </div>
-                `).join('');
-            } else {
-                winnerText = `<div style="font-size: 16px; margin: 6px 0;">"${winner.card}"</div>`;
-            }
-            
-            document.getElementById('winnerDetails').innerHTML = `
-                <div style="color: #4CAF50; font-weight: bold; font-size: 15px;">Winner: ${winner.player}</div>
-                ${winnerText}
-                <div style="margin-top: 6px; color: #4CAF50; font-weight: bold;">🎉 Round Winner! 🎉</div>
-            `;
-            
-            const winnerScore = gameState.scores[winner.playerId] || 0;
-            document.getElementById('winnerScore').textContent = winnerScore;
-            document.getElementById('roundsPlayed').textContent = gameState.currentRound;
-            document.getElementById('deckSize').textContent = gameState.deck.length;
-            
-            if (gameWinner) {
-                const winnerPlayer = gameState.players.find(p => p.id === gameWinner);
-                if (winnerPlayer) {
-                    document.getElementById('winnerDetails').innerHTML += `
-                        <div style="margin-top: 10px; font-size: 18px; color: #FFD700;">
-                            🏆 GAME WINNER: ${winnerPlayer.name}! 🏆
-                        </div>
-                        <div style="color: #666; font-size: 13px;">Final Score: ${gameState.scores[gameWinner]} points (First to 7)</div>
-                    `;
-                    document.getElementById('nextRoundBtn').style.display = 'none';
-                    gameState.gameActive = false;
-                }
-            } else {
-                document.getElementById('nextRoundBtn').style.display = 'inline-block';
-            }
-            
-            showScreen('winner');
         }
         
         function continueToNextRound() {
@@ -2826,7 +3208,7 @@ if (gameState.socket) {
                 
                 submissionDiv.innerHTML = `
                     <div style="font-weight: bold; color: #667eea; margin-bottom: 4px; font-size: 13px;">
-                        ${submission.player}
+                        ${submission.player} ${submission.playerId === gameState.user?.id ? '(You)' : ''}
                     </div>
                     ${answersHTML}
                 `;
@@ -3203,6 +3585,11 @@ if (gameState.socket) {
             } else if (screenId === 'menu') {
                 updateMenuStats();
             }
+            
+            // Special handling for game screens
+            if (screenId === 'game' || screenId === 'judging' || screenId === 'winner') {
+                setTimeout(attachGameEventListeners, 50);
+            }
         }
         
         function switchCollectionTab(tabId) {
@@ -3385,7 +3772,8 @@ if (gameState.socket) {
             }
         }
         
-        // ==================== NEW MULTIPLAYER FUNCTIONS ====================
+        // ==================== MULTIPLAYER FUNCTIONS ====================
+        
         async function register() {
             const username = document.getElementById('registerUsername').value.trim();
             const email = document.getElementById('registerEmail').value.trim();
@@ -3413,7 +3801,6 @@ if (gameState.socket) {
             }
             
             try {
-                // In production, replace with actual API call
                 const response = await mockApiCall('/api/register', {
                     username,
                     email: email || null,
@@ -3440,7 +3827,6 @@ if (gameState.socket) {
             }
             
             try {
-                // In production, replace with actual API call
                 const response = await mockApiCall('/api/login', {
                     username: loginUsername,
                     password: loginPassword
@@ -3489,7 +3875,7 @@ if (gameState.socket) {
         
         function logout() {
             if (gameState.socket) {
-                gameState.socket.close();
+                gameState.socket.disconnect();
             }
             
             gameState.user = null;
@@ -3501,90 +3887,6 @@ if (gameState.socket) {
             
             showScreen('auth');
             showNotification('Logged out successfully', 'success');
-        }
-        
-        function connectWebSocket() {
-            if (gameState.isGuest) {
-                console.log('Guest mode - WebSocket disabled');
-                return;
-            }
-            
-            const wsUrl = 'ws://localhost:3000'; // Change to your server URL
-            gameState.socket = new WebSocket(wsUrl);
-            
-            gameState.socket.onopen = () => {
-                console.log('WebSocket connected');
-                // Authenticate with server
-                gameState.socket.send(JSON.stringify({
-                    type: 'auth',
-                    token: gameState.token,
-                    user: gameState.user
-                }));
-            };
-            
-            gameState.socket.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                handleWebSocketMessage(data);
-            };
-            
-            gameState.socket.onclose = () => {
-                console.log('WebSocket disconnected');
-                setTimeout(connectWebSocket, 3000); // Reconnect after 3 seconds
-            };
-            
-            gameState.socket.onerror = (error) => {
-                console.error('WebSocket error:', error);
-            };
-        }
-        
-        function handleWebSocketMessage(data) {
-            switch (data.type) {
-                case 'auth_success':
-                    console.log('Authenticated with server');
-                    break;
-                    
-                case 'online_players':
-                    gameState.onlinePlayers = data.players;
-                    updateOnlinePlayersList();
-                    break;
-                    
-                case 'friends_update':
-                    gameState.friends = data.friends;
-                    updateFriendsList();
-                    break;
-                    
-                case 'room_created':
-                    joinRoom(data.room);
-                    break;
-                    
-                case 'room_joined':
-                    joinRoom(data.room);
-                    break;
-                    
-                case 'room_updated':
-                    updateRoom(data.room);
-                    break;
-                    
-                case 'room_message':
-                    addRoomMessage(data.message);
-                    break;
-                    
-                case 'game_start':
-                    startMultiplayerGame(data.game);
-                    break;
-                    
-                case 'game_update':
-                    updateMultiplayerGame(data.update);
-                    break;
-                    
-                case 'invite_received':
-                    showInviteNotification(data.invite);
-                    break;
-                    
-                case 'notification':
-                    showNotification(data.message, data.level);
-                    break;
-            }
         }
         
         function createPrivateRoom() {
@@ -3609,10 +3911,7 @@ if (gameState.socket) {
             };
             
             if (gameState.socket) {
-                gameState.socket.send(JSON.stringify({
-                    type: 'create_room',
-                    room: roomData
-                }));
+                gameState.socket.emit('create_room', roomData);
             } else {
                 // Fallback for local/guest mode
                 const roomCode = generateRoomCode();
@@ -3660,10 +3959,7 @@ if (gameState.socket) {
             }
             
             if (gameState.socket) {
-                gameState.socket.send(JSON.stringify({
-                    type: 'join_room',
-                    code: code
-                }));
+                gameState.socket.emit('join_room', { code: code });
             } else {
                 showNotification('Please login to join rooms', 'error');
             }
@@ -3704,10 +4000,6 @@ if (gameState.socket) {
                     </div>
                     <div>
                         ${isReady ? '✅ Ready' : '⏳ Not Ready'}
-                        ${gameState.isHost && !player.isHost ? 
-                            `<button class="small-btn btn-danger" onclick="kickPlayer('${player.id}')">Kick</button>` : 
-                            ''
-                        }
                     </div>
                 `;
                 
@@ -3732,20 +4024,16 @@ if (gameState.socket) {
             }
             
             if (gameState.socket && gameState.currentRoom) {
-                gameState.socket.send(JSON.stringify({
-                    type: 'player_ready',
+                gameState.socket.emit('player_ready', {
                     roomId: gameState.currentRoom.id,
                     isReady: !isReady
-                }));
+                });
             }
         }
         
         function leaveRoom() {
             if (gameState.socket && gameState.currentRoom) {
-                gameState.socket.send(JSON.stringify({
-                    type: 'leave_room',
-                    roomId: gameState.currentRoom.id
-                }));
+                gameState.socket.emit('leave_room', { roomId: gameState.currentRoom.id });
             }
             
             gameState.currentRoom = null;
@@ -3783,11 +4071,9 @@ if (gameState.socket) {
         }
         
         function mockApiCall(endpoint, data) {
-            // Simulate API call delay
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     if (endpoint === '/api/register') {
-                        // Mock registration
                         const user = {
                             id: 'user_' + Date.now(),
                             username: data.username,
@@ -3797,7 +4083,7 @@ if (gameState.socket) {
                         
                         localStorage.setItem('user_' + data.username, JSON.stringify({
                             user,
-                            password: data.password // In real app, this would be hashed
+                            password: data.password
                         }));
                         
                         resolve({
@@ -3806,7 +4092,6 @@ if (gameState.socket) {
                             token: 'mock_jwt_token_' + Date.now()
                         });
                     } else if (endpoint === '/api/login') {
-                        // Mock login
                         const stored = localStorage.getItem('user_' + data.username);
                         if (!stored) {
                             reject(new Error('User not found'));
@@ -3831,75 +4116,6 @@ if (gameState.socket) {
             });
         }
         
-        function updateOnlinePlayersList() {
-            const container = document.getElementById('onlinePlayersList');
-            if (!container) return;
-            
-            if (gameState.onlinePlayers.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #666; font-size: 13px;">No players online</p>';
-                return;
-            }
-            
-            container.innerHTML = '';
-            gameState.onlinePlayers.forEach(player => {
-                const playerDiv = document.createElement('div');
-                playerDiv.className = 'player-online';
-                
-                playerDiv.innerHTML = `
-                    <div>
-                        <span class="status-indicator ${player.status === 'online' ? 'status-online' : 'status-ingame'}"></span>
-                        <span>${player.username}</span>
-                    </div>
-                    <div>
-                        <button class="small-btn btn-secondary" onclick="sendFriendRequest('${player.username}')">
-                            Add
-                        </button>
-                        <button class="small-btn" onclick="inviteToGame('${player.id}')">
-                            Invite
-                        </button>
-                    </div>
-                `;
-                
-                container.appendChild(playerDiv);
-            });
-        }
-        
-        function updateFriendsList() {
-            const container = document.getElementById('friendsList');
-            if (!container) return;
-            
-            if (gameState.friends.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #666; font-size: 13px;">No friends yet</p>';
-                return;
-            }
-            
-            container.innerHTML = '';
-            gameState.friends.forEach(friend => {
-                const friendDiv = document.createElement('div');
-                friendDiv.className = 'friend-item';
-                
-                friendDiv.innerHTML = `
-                    <div>
-                        <span class="status-indicator ${friend.online ? 'status-online' : 'status-offline'}"></span>
-                        <span>${friend.username}</span>
-                    </div>
-                    <div>
-                        ${friend.online ? 
-                            `<button class="small-btn btn-success" onclick="inviteToGame('${friend.id}')">
-                                Invite
-                            </button>` : 
-                            '<span style="color: #999; font-size: 11px;">Offline</span>'
-                        }
-                        <button class="small-btn btn-danger" onclick="removeFriend('${friend.id}')">
-                            Remove
-                        </button>
-                    </div>
-                `;
-                
-                container.appendChild(friendDiv);
-            });
-        }
-        
         function switchMenuTab(tabId) {
             document.querySelectorAll('.tab-button').forEach(btn => {
                 btn.classList.remove('active');
@@ -3910,13 +4126,6 @@ if (gameState.socket) {
             
             document.querySelector(`[onclick="switchMenuTab('${tabId}')"]`).classList.add('active');
             document.getElementById(tabId + 'Tab').classList.add('active');
-            
-            if (tabId === 'social' && gameState.socket) {
-                // Request fresh online players list
-                gameState.socket.send(JSON.stringify({
-                    type: 'get_online_players'
-                }));
-            }
         }
         
         // Initialize on load
@@ -3958,6 +4167,14 @@ if (gameState.socket) {
                     if (number >= 1 && number <= 10) {
                         selectCard(number - 1);
                     }
+                    
+                    if (e.key === 'Enter' && document.getElementById('submitBtn') && !document.getElementById('submitBtn').disabled) {
+                        if (gameState.currentRoom) {
+                            handleMultiplayerSubmit();
+                        } else {
+                            submitCard();
+                        }
+                    }
                 }
                 
                 if (e.key === 'Escape' && !document.getElementById('authScreen').classList.contains('active')) {
@@ -3995,11 +4212,11 @@ if (gameState.socket) {
         window.toggleCardEnabled = toggleCardEnabled;
         window.deleteCard = deleteCard;
         window.enableAllCards = enableAllCards;
-        window.submitCard = submitCard;
+        window.startGameFromLobby = startGameFromLobby;
         window.forceBotSubmission = forceBotSubmission;
-        window.returnToMenu = returnToMenu;
         window.forceRandomWinner = forceRandomWinner;
+        window.returnToMenu = returnToMenu;
         window.continueToNextRound = continueToNextRound;
     </script>
 </body>
-  </html>
+    </html>

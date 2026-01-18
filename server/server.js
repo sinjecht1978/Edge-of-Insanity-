@@ -61,6 +61,92 @@ io.on('connection', (socket) => {
       return;
     }
     
+    // ✅ FIX: Check if THIS socket.id is already in room
+    if (!room.players.includes(socket.id)) {
+      room.players.push(socket.id);
+      socket.join(roomCode);
+      
+      // Tell everyone in the room
+      io.to(roomCode).emit('room_update', {
+        type: 'player_joined',
+        room: room,
+        player: players.get(socket.id),
+        allPlayers: room.players.map(id => players.get(id))
+      });
+      
+      console.log(`👥 ${players.get(socket.id)?.username} joined ${roomCode}`);
+    }
+  });
+  
+  // Leave room
+  socket.on('leave_room', (data) => {
+    const room = rooms.get(data.roomCode);
+    if (room) {
+      // ✅ FIX: Only remove THIS socket's ID
+      const index = room.players.indexOf(socket.id);
+      if (index > -1) {
+        room.players.splice(index, 1);
+      }
+      
+      // Remove room if empty
+      if (room.players.length === 0) {
+        rooms.delete(data.roomCode);
+      }
+      
+      socket.leave(data.roomCode);
+      io.to(data.roomCode).emit('room_update', {
+        type: 'player_left',
+        playerId: socket.id
+      });
+    }
+  });
+  
+  // Chat message
+  socket.on('room_chat', (data) => {
+    const player = players.get(socket.id);
+    io.to(data.roomCode).emit('chat_message', {
+      player: player?.username || 'Anonymous',
+      message: data.message,
+      timestamp: new Date().toISOString()
+    });
+  });
+  
+  // Disconnect
+  socket.on('disconnect', () => {
+    const player = players.get(socket.id);
+    console.log(`🔴 Player disconnected: ${player?.username || socket.id}`);
+    
+    // Remove from all rooms
+    rooms.forEach((room, roomCode) => {
+      if (room.players.includes(socket.id)) {
+        room.players = room.players.filter(id => id !== socket.id);
+        
+        if (room.players.length === 0) {
+          rooms.delete(roomCode);
+        } else {
+          io.to(roomCode).emit('room_update', {
+            type: 'player_left',
+            playerId: socket.id
+          });
+        }
+      }
+    });
+    
+    players.delete(socket.id);
+  });
+});
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`🎮 Cards Game Server running at:`);
+  console.log(`   Local:  http://localhost:${PORT}`);
+  console.log(`   Network: http://YOUR-IP:${PORT} (for testing on phone)`);
+});    socket.emit('room_error', { message: 'Room is full' });
+    return;
+  }
+  
+  // ✅ FIX: Check if THIS socket.id is already in room
+  if (!room.players.includes(socket.id)) {
     room.players.push(socket.id);
     socket.join(roomCode);
     
@@ -73,14 +159,8 @@ io.on('connection', (socket) => {
     });
     
     console.log(`👥 ${players.get(socket.id)?.username} joined ${roomCode}`);
-  });
-  
-  // Leave room
-  socket.on('leave_room', (data) => {
-    const room = rooms.get(data.roomCode);
-    if (room) {
-      room.players = room.players.filter(id => id !== socket.id);
-      
+  }
+});
       // Remove room if empty
       if (room.players.length === 0) {
         rooms.delete(data.roomCode);

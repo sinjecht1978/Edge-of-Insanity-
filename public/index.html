@@ -1954,34 +1954,37 @@ if ('serviceWorker' in navigator) {
             document.getElementById('menuQuestionCount').textContent = totalQuestions;
             document.getElementById('menuCustomCount').textContent = customAnswers + customQuestions;
         }
-        function startGameFromLobby() {
-  if (!gameState.isHost) {
-    alert('Only the host can start the game!');
+function startGameFromLobby() {
+  console.log('=== START GAME DEBUG ===');
+  console.log('Room:', gameState.currentRoom?.code);
+  console.log('Socket:', !!gameState.socket);
+  console.log('Host flag:', gameState.isHost);
+  
+  // Quick check: are we even connected?
+  if (!gameState.currentRoom || !gameState.socket) {
+    alert('Not connected to a room!');
     return;
   }
   
-  if (!gameState.currentRoom) {
-    alert('Not in a room!');
-    return;
-  }
-  
-  console.log('Starting game...');
-  
+  // EMERGENCY: Just try it anyway!
+  console.log('🚀 Sending start_game to server...');
   gameState.socket.emit('start_game', {
     roomCode: gameState.currentRoom.code
   });
+  
+  alert('Start game request sent to server!');
 }
 
-// Add these socket listeners
-gameState.socket.on('game_started', (data) => {
-  console.log('Game started!', data);
-  showScreen('game');
-  // TODO: Initialize multiplayer game
-});
+// Socket listeners for game events
+if (gameState.socket) {
+  gameState.socket.on('game_started', (data) => {
+    console.log('✅ Game started!', data);
+    showScreen('game');
+  });
 
-gameState.socket.on('game_error', (data) => {
-  alert('Game error: ' + data.message);
-});
+  gameState.socket.on('game_error', (data) => {
+    alert('❌ Game error: ' + data.message);
+  });
         // ==================== YOUR ORIGINAL GAME FUNCTIONS ====================
         function startSolitaireGame() {
             console.log("🎮 Starting solitaire game with 3 bots...");

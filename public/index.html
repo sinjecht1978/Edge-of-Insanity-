@@ -1985,6 +1985,26 @@ if (gameState.socket) {
   gameState.socket.on('game_error', (data) => {
     alert('❌ Game error: ' + data.message);
   });
+    // Socket listeners for game events
+if (gameState.socket) {
+  gameState.socket.on('game_started', (data) => {
+    console.log('✅ Game started!', data);
+    
+    // Initialize multiplayer game
+    gameState.gamePhase = "playing";
+    gameState.gameActive = true;
+    gameState.players = data.room.players;
+    gameState.currentRound = 1;
+    gameState.isJudge = data.room.judgeIndex === 0;
+    
+    showScreen('game');
+    startRound();  // Start first round
+  });
+
+  gameState.socket.on('game_error', (data) => {
+    alert('❌ Game error: ' + data.message);
+  });
+}
         // ==================== YOUR ORIGINAL GAME FUNCTIONS ====================
         function startSolitaireGame() {
             console.log("🎮 Starting solitaire game with 3 bots...");

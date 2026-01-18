@@ -1954,7 +1954,34 @@ if ('serviceWorker' in navigator) {
             document.getElementById('menuQuestionCount').textContent = totalQuestions;
             document.getElementById('menuCustomCount').textContent = customAnswers + customQuestions;
         }
-        
+        function startGameFromLobby() {
+  if (!gameState.isHost) {
+    alert('Only the host can start the game!');
+    return;
+  }
+  
+  if (!gameState.currentRoom) {
+    alert('Not in a room!');
+    return;
+  }
+  
+  console.log('Starting game...');
+  
+  gameState.socket.emit('start_game', {
+    roomCode: gameState.currentRoom.code
+  });
+}
+
+// Add these socket listeners
+gameState.socket.on('game_started', (data) => {
+  console.log('Game started!', data);
+  showScreen('game');
+  // TODO: Initialize multiplayer game
+});
+
+gameState.socket.on('game_error', (data) => {
+  alert('Game error: ' + data.message);
+});
         // ==================== YOUR ORIGINAL GAME FUNCTIONS ====================
         function startSolitaireGame() {
             console.log("🎮 Starting solitaire game with 3 bots...");

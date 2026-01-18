@@ -819,7 +819,7 @@
         
         .anonymous-card {
             background: #f8f9fa;
-            border: 2px dashed #ccc;
+            border: 2px solid #e0e0e0;
             border-radius: 8px;
             padding: 12px;
             margin: 8px 0;
@@ -827,12 +827,11 @@
             font-size: 14px;
         }
         
-        .anonymous-label {
-            font-size: 10px;
-            color: #666;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .card-content-only {
+            font-size: 14px;
+            line-height: 1.4;
+            color: #333;
+            text-align: center;
         }
     </style>
 
@@ -1025,7 +1024,7 @@ if ('serviceWorker' in navigator) {
                         </div>
                         <div class="stat-box">
                             <div class="stat-value">7</div>
-                            <div class="stat-label">Points to Win</div>
+                            <div class="point-label">Points to Win</div>
                         </div>
                     </div>
                     
@@ -1203,16 +1202,16 @@ if ('serviceWorker' in navigator) {
                     <div id="hostControls" style="display: none; margin-bottom: 15px; padding: 10px; background: #f0f8ff; border-radius: 6px;">
                         <h4 style="font-size: 14px; margin-bottom: 8px;">⚙️ Host Controls</h4>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                            <button class="btn btn-secondary" onclick="startGameFromLobby()">
+                            <button class="btn btn-secondary" id="startGameBtn">
                                 🚀 Start Game
                             </button>
-                            <button class="btn btn-warning" onclick="kickAllBots()">
+                            <button class="btn btn-warning" id="kickBotsBtn">
                                 🤖 Remove Bots
                             </button>
-                            <button class="btn" onclick="addBotToRoom()">
+                            <button class="btn" id="addBotBtn">
                                 ➕ Add Bot
                             </button>
-                            <button class="btn btn-danger" onclick="closeRoom()">
+                            <button class="btn btn-danger" id="closeRoomBtn">
                                 ❌ Close Room
                             </button>
                         </div>
@@ -1221,7 +1220,7 @@ if ('serviceWorker' in navigator) {
                     <!-- Invite Section -->
                     <div style="margin-top: 10px;">
                         <div class="share-url" id="lobbyInviteCode" style="text-align: center; font-weight: bold; font-size: 16px; padding: 10px;"></div>
-                        <button class="btn btn-secondary" onclick="copyLobbyInvite()" style="width: 100%; margin-top: 8px;">
+                        <button class="btn btn-secondary" id="copyInviteBtn" style="width: 100%; margin-top: 8px;">
                             📋 Copy Invite Code
                         </button>
                     </div>
@@ -1250,10 +1249,10 @@ if ('serviceWorker' in navigator) {
                 
                 <!-- Action Buttons -->
                 <div class="action-buttons" style="margin-top: 15px;">
-                    <button class="btn btn-success" onclick="readyToggle()" id="readyButton">
+                    <button class="btn btn-success" id="readyBtn">
                         ✅ Ready
                     </button>
-                    <button class="btn btn-warning" onclick="leaveRoom()">
+                    <button class="btn btn-warning" id="leaveRoomBtn">
                         Leave Room
                     </button>
                 </div>
@@ -1894,6 +1893,68 @@ if ('serviceWorker' in navigator) {
         
         // ==================== NEW FIXED FUNCTIONS ====================
         
+        function attachLobbyEventListeners() {
+            console.log('🔗 Attaching lobby event listeners...');
+            
+            const startGameBtn = document.getElementById('startGameBtn');
+            if (startGameBtn) {
+                startGameBtn.onclick = function() {
+                    console.log('Start game button clicked');
+                    startGameFromLobby();
+                };
+            }
+            
+            const addBotBtn = document.getElementById('addBotBtn');
+            if (addBotBtn) {
+                addBotBtn.onclick = function() {
+                    console.log('Add bot button clicked');
+                    addBotToRoom();
+                };
+            }
+            
+            const kickBotsBtn = document.getElementById('kickBotsBtn');
+            if (kickBotsBtn) {
+                kickBotsBtn.onclick = function() {
+                    console.log('Kick bots button clicked');
+                    kickAllBots();
+                };
+            }
+            
+            const closeRoomBtn = document.getElementById('closeRoomBtn');
+            if (closeRoomBtn) {
+                closeRoomBtn.onclick = function() {
+                    console.log('Close room button clicked');
+                    closeRoom();
+                };
+            }
+            
+            const copyInviteBtn = document.getElementById('copyInviteBtn');
+            if (copyInviteBtn) {
+                copyInviteBtn.onclick = function() {
+                    console.log('Copy invite button clicked');
+                    copyLobbyInvite();
+                };
+            }
+            
+            const readyBtn = document.getElementById('readyBtn');
+            if (readyBtn) {
+                readyBtn.onclick = function() {
+                    console.log('Ready button clicked');
+                    readyToggle();
+                };
+            }
+            
+            const leaveRoomBtn = document.getElementById('leaveRoomBtn');
+            if (leaveRoomBtn) {
+                leaveRoomBtn.onclick = function() {
+                    console.log('Leave room button clicked');
+                    leaveRoom();
+                };
+            }
+            
+            console.log('✅ Lobby event listeners attached');
+        }
+        
         function attachGameEventListeners() {
             console.log('🔗 Attaching game event listeners...');
             
@@ -1990,6 +2051,54 @@ if ('serviceWorker' in navigator) {
             }
         }
         
+        function addBotToRoom() {
+            console.log('🤖 Adding bot to room...');
+            alert('Bot added to room!');
+            
+            // Add a bot to the room
+            if (gameState.socket && gameState.currentRoom) {
+                gameState.socket.emit('add_bot', {
+                    roomId: gameState.currentRoom.id
+                });
+            }
+        }
+        
+        function kickAllBots() {
+            console.log('👢 Kicking all bots...');
+            alert('All bots removed from room!');
+            
+            if (gameState.socket && gameState.currentRoom) {
+                gameState.socket.emit('kick_bots', {
+                    roomId: gameState.currentRoom.id
+                });
+            }
+        }
+        
+        function closeRoom() {
+            console.log('❌ Closing room...');
+            if (confirm('Are you sure you want to close the room? All players will be kicked.')) {
+                if (gameState.socket && gameState.currentRoom) {
+                    gameState.socket.emit('close_room', {
+                        roomId: gameState.currentRoom.id
+                    });
+                }
+                leaveRoom();
+            }
+        }
+        
+        function copyLobbyInvite() {
+            const roomCode = document.getElementById('lobbyInviteCode').textContent;
+            if (roomCode && roomCode !== '----') {
+                navigator.clipboard.writeText(roomCode).then(() => {
+                    alert('✅ Room code copied to clipboard: ' + roomCode);
+                }).catch(() => {
+                    prompt('Copy this room code:', roomCode);
+                });
+            } else {
+                alert('No room code available');
+            }
+        }
+        
         function startMultiplayerGameLocally() {
             console.log('🎮 Starting multiplayer game locally...');
             
@@ -2083,7 +2192,7 @@ if ('serviceWorker' in navigator) {
                 }
             }
             
-            // Create anonymous submission
+            // Create anonymous submission (NO LABELS)
             gameState.submittedCards.push({
                 player: "Anonymous",
                 playerId: gameState.user.id,
@@ -2144,34 +2253,24 @@ if ('serviceWorker' in navigator) {
                 const optionDiv = document.createElement('div');
                 optionDiv.className = 'judge-option';
                 
-                let answersHTML = '';
+                let cardContent = '';
                 if (Array.isArray(submission.card)) {
-                    answersHTML = `
-                        <div class="anonymous-card">
-                            <div class="anonymous-label">Submission ${index + 1}</div>
-                            <div class="multi-answer-container">
-                                ${submission.card.map((card, i) => `
-                                    <div class="answer-item">
-                                        <div class="answer-number">${i + 1}</div>
-                                        <div style="font-size: 13px;">${card}</div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `;
+                    // For multiple cards, show them in a nice format
+                    cardContent = submission.card.map((card, i) => 
+                        `<div style="margin: 4px 0; padding: 6px; background: #f8f9fa; border-radius: 4px; font-size: 13px;">
+                            ${card}
+                        </div>`
+                    ).join('');
                 } else {
-                    answersHTML = `
-                        <div class="anonymous-card">
-                            <div class="anonymous-label">Submission ${index + 1}</div>
-                            <div style="font-size: 14px; margin: 4px 0;">${submission.card}</div>
-                        </div>
-                    `;
+                    // For single card
+                    cardContent = `<div class="card-content-only">${submission.card}</div>`;
                 }
                 
                 optionDiv.innerHTML = `
-                    <div style="font-size: 16px; color: #667eea; margin-bottom: 4px;">Option ${index + 1}</div>
-                    ${answersHTML}
-                    <div style="color: #666; font-size: 11px; margin-top: 4px;">Anonymous Submission</div>
+                    <div style="font-size: 16px; color: #667eea; margin-bottom: 8px; text-align: center;">
+                        Option ${index + 1}
+                    </div>
+                    ${cardContent}
                 `;
                 
                 optionDiv.onclick = () => selectWinner(index);
@@ -2257,7 +2356,7 @@ if ('serviceWorker' in navigator) {
                 
                 submissionDiv.innerHTML = `
                     <div style="font-weight: bold; color: #667eea; margin-bottom: 4px; font-size: 13px;">
-                        ${submission.player} ${submission.playerId === gameState.user.id ? '(You)' : ''}
+                        ${submission.player} ${submission.playerId === gameState.user?.id ? '(You)' : ''}
                     </div>
                     ${answersHTML}
                 `;
@@ -2951,7 +3050,7 @@ if ('serviceWorker' in navigator) {
                 }
             }
             
-            // Create anonymous submission
+            // Create anonymous submission (NO LABELS)
             gameState.submittedCards.push({
                 player: "Anonymous",
                 playerId: 'player_human',
@@ -3005,7 +3104,7 @@ if ('serviceWorker' in navigator) {
                 
                 const submissionCards = bot.getSubmissionText(selectedIndices);
                 
-                // Create anonymous bot submission
+                // Create anonymous bot submission (NO LABELS)
                 gameState.submittedCards.push({
                     player: "Anonymous",
                     playerId: bot.id,
@@ -3587,6 +3686,10 @@ if ('serviceWorker' in navigator) {
             }
             
             // Special handling for game screens
+            if (screenId === 'roomLobby') {
+                setTimeout(attachLobbyEventListeners, 50);
+            }
+            
             if (screenId === 'game' || screenId === 'judging' || screenId === 'winner') {
                 setTimeout(attachGameEventListeners, 50);
             }
@@ -4008,7 +4111,7 @@ if ('serviceWorker' in navigator) {
         }
         
         function readyToggle() {
-            const button = document.getElementById('readyButton');
+            const button = document.getElementById('readyBtn');
             const isReady = button.textContent.includes('Ready');
             
             if (isReady) {
@@ -4212,11 +4315,14 @@ if ('serviceWorker' in navigator) {
         window.toggleCardEnabled = toggleCardEnabled;
         window.deleteCard = deleteCard;
         window.enableAllCards = enableAllCards;
-        window.startGameFromLobby = startGameFromLobby;
+        window.addBotToRoom = addBotToRoom;
+        window.kickAllBots = kickAllBots;
+        window.closeRoom = closeRoom;
+        window.copyLobbyInvite = copyLobbyInvite;
         window.forceBotSubmission = forceBotSubmission;
         window.forceRandomWinner = forceRandomWinner;
         window.returnToMenu = returnToMenu;
         window.continueToNextRound = continueToNextRound;
     </script>
 </body>
-    </html>
+</html>

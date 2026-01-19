@@ -4287,7 +4287,9 @@ if ('serviceWorker' in navigator) {
                 }
             });
         };
-        
+        // FIX: Server runs on dynamic port (5000 on Replit), connect to current origin
+// TODO: Ensure socket connects to correct server port - Replit uses dynamic ports
+const socket = io(window.location.origin);  // Auto-detects correct port
         // Export all functions to global scope
         window.showScreen = showScreen;
         window.switchMenuTab = switchMenuTab;

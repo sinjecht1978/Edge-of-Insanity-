@@ -1,3 +1,64 @@
+// ✅ PORT CONFIGURATION FIXED BY AI: Running on port 5000
+
+// TODO: FIX JUDGE DECISION BUG
+// PROBLEM: When judge selects card, sometimes wrong card wins
+// FIX: Validate winningCardId exists in game state before proceeding
+
+// TODO: IMPLEMENT BOT SYSTEM
+// Add socket events: 'add_bot' and 'add_bots'
+// Bots should: auto-play cards, auto-judge, appear as 🤖 players
+// Only room host can add/remove bots
+
+// TODO: ADD REJOIN FUNCTIONALITY
+// Players should reconnect without reset after app switch
+// Need 'rejoin_room' event and game state restoration
+
+socket.on('judge_decision', ({ roomId, winningCardId, playerId }) => {
+    console.log('🎯 JUDGE DECISION RECEIVED - DEBUG INFO:');
+    console.log('Room:', roomId);
+    console.log('Selected Card ID:', winningCardId);
+    console.log('Winning Player ID:', playerId);
+    
+    const room = rooms.get(roomId);
+    if (!room) {
+        console.error('❌ Room not found for judge decision');
+        return;
+    }
+    
+    // TODO: AI - ADD VALIDATION HERE
+    // Check if winningCardId actually exists in current round submissions
+    // This prevents the "random card wins" bug
+    
+    // TEMPORARY LOGGING FOR DEBUG
+    if (room.currentGame) {
+        console.log('Current game submissions:', room.currentGame.submittedCards);
+    }
+    
+    // TODO: AI - Fix this to ensure correct card is announced as winner
+    io.to(roomId).emit('winner_selected', {
+        winningCardId: winningCardId,
+        winningPlayerId: playerId,
+        roomId: roomId
+    });
+});
+
+// TODO: AI - IMPLEMENT BOT ADDITION LOGIC HERE
+socket.on('add_bot', ({ roomId }) => {
+    console.log('🤖 ADD BOT REQUEST for room:', roomId);
+    // TODO: AI - Implement bot creation logic
+    // Bot should have: isBot: true, auto-ready, 🤖 name
+});
+
+socket.on('add_bots', ({ roomId, count }) => {
+    console.log(`🤖 ADD ${count} BOTS REQUEST for room:`, roomId);
+    // TODO: AI - Implement multiple bot creation
+});
+
+// TODO: AI - IMPLEMENT REJOIN LOGIC
+socket.on('rejoin_room', ({ roomId }) => {
+    console.log('🔄 REJOIN REQUEST for room:', roomId);
+    // TODO: AI - Restore player's game state without resetting
+});
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');

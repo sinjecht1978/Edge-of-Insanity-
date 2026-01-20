@@ -3091,7 +3091,115 @@ if ('serviceWorker' in navigator) {
                 submitCard();
             }
         }
-        
+        // ✅ PORT ISSUE FIXED BY AI: Server now correctly configured to port 5000
+
+// TODO: FIX JUDGE SELECTION BUG - URGENT
+// PROBLEM: When I pick an answer as judge, game selects random card instead of my choice
+// FIX NEEDED: Ensure judgeSelectsWinner() uses ACTUAL clicked cardId, not random
+// Debug: Log which card is actually being selected vs what's submitted
+
+// TODO: ADD BOT SUPPORT TO MULTIPLAYER
+// Room host needs ability to add AI players (bots) to fill empty slots
+// Bots should: have 🤖 emoji, auto-ready status, and play cards automatically
+// Need UI buttons: "Add Bot", "Add 3 Bots", "Fill Room with Bots"
+
+// TODO: ADD PERSISTENCE - Prevent reset on app switch
+// Game completely resets when I switch to another app on my phone
+// FIX: Save game state to localStorage and restore when returning
+// Should only reset if I manually close the app, not on background switch
+
+let currentRoomId = null;
+let currentRoom = null;
+let submittedCards = [];
+
+// ✅ PORT FIXED - Connection should work now
+const socket = io();  // AI fixed to connect to correct port (5000)
+
+// 🐛 BUGGY FUNCTION - NEEDS FIX
+function judgeSelectsWinner(cardId) {
+    console.log('🎯 DEBUG: Judge selecting card with ID:', cardId);
+    console.log('📋 Available submitted cards:', submittedCards.map(c => ({id: c.id, text: c.text?.substring(0,50)})));
+    
+    // TODO: FIX THIS BUG - Sometimes selects wrong card
+    // PROBLEM: cardId doesn't match actual submitted card
+    // POSSIBLE CAUSES:
+    // 1. Card IDs mismatch between frontend and backend
+    // 2. submittedCards array doesn't contain the right IDs
+    // 3. Click event passing wrong ID
+    
+    const selectedCard = submittedCards.find(card => card.id === cardId);
+    if (!selectedCard) {
+        console.error('❌ CRITICAL BUG: Selected card ID not found in submittedCards!');
+        console.error('Looking for:', cardId);
+        console.error('Available IDs:', submittedCards.map(c => c.id));
+        alert('Bug: Card not found. AI needs to fix judge selection logic.');
+        return;
+    }
+    
+    // TODO: AI - Fix this socket emit to ensure correct card is selected
+    socket.emit('judge_decision', {
+        roomId: currentRoomId,
+        winningCardId: cardId,  // This should be the ACTUAL selected card
+        playerId: selectedCard.playerId
+    });
+}
+
+// TODO: AI - ADD BOT MANAGEMENT FUNCTIONS
+function addBot() {
+    if (!currentRoomId) return;
+    socket.emit('add_bot', { roomId: currentRoomId });
+    console.log('🤖 Requesting bot addition');
+}
+
+function addBots(count) {
+    if (!currentRoomId) return;
+    socket.emit('add_bots', { roomId: currentRoomId, count: count });
+}
+
+function fillWithBots() {
+    if (!currentRoomId || !currentRoom) return;
+    const emptySlots = currentRoom.maxPlayers - currentRoom.players.length;
+    if (emptySlots > 0) {
+        socket.emit('add_bots', { roomId: currentRoomId, count: emptySlots });
+    }
+}
+
+// TODO: AI - IMPLEMENT PERSISTENCE SYSTEM
+// Game should survive app switching on mobile
+function saveGameState() {
+    const state = {
+        roomId: currentRoomId,
+        room: currentRoom,
+        players: currentPlayers || [],
+        timestamp: Date.now()
+    };
+    localStorage.setItem('cah_game_state', JSON.stringify(state));
+}
+
+function loadGameState() {
+    const saved = localStorage.getItem('cah_game_state');
+    if (saved) {
+        const state = JSON.parse(saved);
+        // Only restore if less than 30 minutes old
+        if (Date.now() - state.timestamp < 30 * 60 * 1000) {
+            currentRoomId = state.roomId;
+            currentRoom = state.room;
+            // TODO: AI - Implement reconnection logic
+            socket.emit('rejoin_room', { roomId: currentRoomId });
+            return true;
+        }
+    }
+    return false;
+}
+
+// TODO: AI - Add these event listeners to prevent reset
+window.addEventListener('beforeunload', saveGameState);
+window.addEventListener('pagehide', saveGameState);
+
+// Check for saved state on load
+if (loadGameState()) {
+    console.log('🔄 Restored game from localStorage');
+    }
         function submitBotsCards() {
             Object.values(bots).forEach(bot => {
                 if (bot.hasSubmitted) return;
